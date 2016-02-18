@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-//import com.soundcloud.android;
 
 /**
  * Created by Maklumi on 17-02-16.
@@ -67,7 +66,7 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         changeAvatarButton = findViewById(R.id.activity_profile_change_avatar);
         displayNameText = (EditText) findViewById(R.id.activity_profile_displayName);
         emailText = (EditText) findViewById(R.id.activity_profile_email); 
-        tempOutputFile = new File(getExternalCacheDir(), "temp-image.png");
+        tempOutputFile = new File(getExternalCacheDir(), "temp-image.jpg");
 
         avatarView.setOnClickListener(this);
         changeAvatarButton.setOnClickListener(this);
@@ -92,7 +91,8 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         int viewId = v.getId();
 
         if (viewId == R.id.activity_profile_change_avatar || viewId == R.id.activity_profile_avatar)
-            changeAvatar();
+           // changeAvatar();
+        return;
     }
 
     private void changeAvatar() {
@@ -134,10 +134,13 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
                 outputFile = tempFileUri;
 
             // my change from original code on new crop
-            Crop.of(tempFileUri, outputFile)
-            .asSquare()
-            .start(this);
+//            Crop.of(tempFileUri, outputFile)
+//            .asSquare()
+//            .start(this);
 
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            //TODO send tempfileoutput to server
+            avatarView.setImageURI(Uri.fromFile(tempOutputFile));
 
         }
 
@@ -206,7 +209,7 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             int itemId = item.getItemId();
 
             if (itemId == R.id.activity_profile_edit_menuDone){
-                //TODO send update requ3est
+                //TODO send update request
                 User user = application.getAuth().getUser();
                 user.setDisplayName(displayNameText.getText().toString());
                 user.setEmail(emailText.getText().toString());

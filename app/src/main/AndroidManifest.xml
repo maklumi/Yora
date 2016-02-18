@@ -20,7 +20,7 @@
         <activity android:name=".activities.RegisterActivity"/>
         <activity android:name=".activities.ExternalLoginActivity"/>
         <activity android:name=".activities.ProfileActivity"/>
-        <activity android:name=".activities.SendMessagesActivity"/>
+        <activity android:name=".activities.SentMessagesActivity"/>
         <activity android:name=".activities.ContactActivity"/>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
 

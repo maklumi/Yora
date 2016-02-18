@@ -36,7 +36,6 @@ private Button loginButton;
     @Override
     public void onClick(View v) {
         if (v == loginButton){
-            application.getAuth().getUser().setLoggedIn(true); //temporary
             callbacks.onLoggedIn();
         }
     }

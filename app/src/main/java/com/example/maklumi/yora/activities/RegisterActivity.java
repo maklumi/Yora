@@ -25,12 +25,12 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
         setContentView(R.layout.activity_register);
 
-        usernameText.findViewById(R.id.activity_register_userName);
-        emailText.findViewById(R.id.activity_register_email);
-        passwordText.findViewById(R.id.activity_register_password);
-        registerButton.findViewById(R.id.activity_register_registerButton);
-        progressBar.findViewById(R.id.activity_register_progressBar);
-
+        usernameText = (EditText) findViewById(R.id.activity_register_userName);
+        emailText = (EditText) findViewById(R.id.activity_register_email);
+        passwordText = (EditText) findViewById(R.id.activity_register_password);
+        registerButton = (Button) findViewById(R.id.activity_register_registerButton);
+        progressBar = findViewById(R.id.activity_register_progressBar);
+if (registerButton != null)
         registerButton.setOnClickListener(this);
         progressBar.setVisibility(View.GONE);
     }
@@ -38,7 +38,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v == registerButton) {
-            application.getAuth().getUser().setLoggedIn(true);// temp
             setResult(RESULT_OK);
             finish();
         }

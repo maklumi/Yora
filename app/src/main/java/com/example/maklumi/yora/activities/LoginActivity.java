@@ -27,9 +27,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_login);
 
         loginButton =  findViewById(R.id.activity_login_login);
-        if(loginButton != null) {
+        if(loginButton != null)
             loginButton.setOnClickListener(this);
-        }
 
         registerButton  = findViewById(R.id.activity_login_register);
         facebookLoginButton = findViewById(R.id.activity_login_facebook);
@@ -66,7 +65,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         if (resultCode != RESULT_OK) return;; //eg press back button
 
-        if (requestCode == REQUEST_NARROW_LOGIN ||
+        if (    requestCode == REQUEST_NARROW_LOGIN ||
                 requestCode == REQUEST_REGISTER ||
                 requestCode == REQUEST_EXTERNAL_LOGIN)
             finishLogin();

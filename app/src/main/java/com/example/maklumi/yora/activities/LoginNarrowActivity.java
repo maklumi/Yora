@@ -3,6 +3,7 @@ package com.example.maklumi.yora.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.fragments.LoginFragment;
@@ -10,7 +11,7 @@ import com.example.maklumi.yora.fragments.LoginFragment;
 /**
  * Created by Maklumi on 16-02-16.
  */
-public class LoginNarrowActivity extends BaseActivity implements LoginFragment.Callbacks {
+public class LoginNarrowActivity extends BaseActivity implements  LoginFragment.Callbacks {
     private View loginNarrowButton;
 
     @Override
@@ -19,7 +20,7 @@ public class LoginNarrowActivity extends BaseActivity implements LoginFragment.C
 
         setContentView(R.layout.activity_login_narrow);
 
-        loginNarrowButton = findViewById(R.id.activity_login_narrow_fragment);
+        loginNarrowButton =  findViewById(R.id.fragment_login_loginButton);
     }
 
     @Override
@@ -27,4 +28,5 @@ public class LoginNarrowActivity extends BaseActivity implements LoginFragment.C
         setResult(RESULT_OK);
         finish();
     }
+
 }

@@ -1,15 +1,18 @@
 package com.example.maklumi.yora.views;
 
 import android.content.Intent;
+import android.os.Debug;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.activities.BaseActivity;
@@ -21,11 +24,12 @@ import java.util.ArrayList;
  * Created by Maklumi on 17-02-16.
  */
 public class NavDrawer {
+    private ArrayList<NavDrawerItem> items;
+    private NavDrawerItem selectedItem;
+
     protected BaseActivity activity;
     protected DrawerLayout drawerLayout;
     protected ViewGroup navDrawerView;
-    private ArrayList<NavDrawerItem> items;
-    private NavDrawerItem selectedItem;
 
     public NavDrawer(BaseActivity activity) {
         this.activity = activity;
@@ -38,7 +42,7 @@ public class NavDrawer {
                     "the ids of drawer_layout and nav_drawer");
 
         Toolbar toolbar = activity.getToolbar();
-        toolbar.setNavigationIcon(R.drawable.ic_setting);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,14 +57,14 @@ public class NavDrawer {
     }
 
     public boolean isOpen() {
-        return drawerLayout.isDrawerOpen(GravityCompat.START);
+        return drawerLayout.isDrawerOpen(Gravity.START);
     }
 
     public void setOpen(boolean isOpen){
         if (isOpen)
-            drawerLayout.openDrawer(GravityCompat.START);
+            drawerLayout.openDrawer(Gravity.START);
         else
-            drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.closeDrawer(Gravity.START);
     }
 
     public void setSelectedItem(NavDrawerItem item){
@@ -83,7 +87,7 @@ public class NavDrawer {
 
         public abstract void inflate(LayoutInflater inflater, ViewGroup container);
 
-        public abstract void setSelected(boolean   isSelected);
+        public abstract void setSelected(boolean isSelected);
     }
 
     public static class BasicNavDrawerItem extends NavDrawerItem implements View.OnClickListener {
@@ -91,6 +95,7 @@ public class NavDrawer {
         private String badge;
         private int iconDrawable;
         private int containerId;
+
         private ImageView icon;
         private TextView textView;
         private TextView badgeTextView;
@@ -100,14 +105,14 @@ public class NavDrawer {
         public BasicNavDrawerItem(String text, String badge, int iconDrawable, int containerId){
             this.text = text;
             this.badge = badge;
-            this.iconDrawable=iconDrawable;
-            this.containerId=containerId;
+            this.iconDrawable = iconDrawable;
+            this.containerId = containerId;
         }
 
         @Override
         public void inflate(LayoutInflater inflater, ViewGroup navDrawView) {
             ViewGroup container = (ViewGroup) navDrawView.findViewById(containerId);
-            if (container==null)
+            if (container == null)
                 throw new RuntimeException("NavDrawer item " + text + " could not be attached to ViewGroup. View not found");
 
             view = inflater.inflate(R.layout.list_item_nav_drawer, container, false);
@@ -134,8 +139,9 @@ public class NavDrawer {
         public void setSelected(boolean isSelected) {
             if (isSelected) {
                 view.setBackgroundResource(R.drawable.list_item_nav_drawer_selected_item_background);
-              //  textView.setTextColor(navDrawer.activity.getResources().getColor(R.color.list_item_nav_drawer_selected_item_text_color));
-                textView.setTextColor(ContextCompat.getColor(navDrawer.activity.getBaseContext(), R.color.list_item_nav_drawer_selected_item_text_color));
+                textView.setTextColor(navDrawer.activity.getResources().getColor(R.color.list_item_nav_drawer_selected_item_text_color));
+              //  textView.setTextColor(ContextCompat.getColor(navDrawer.activity.getBaseContext(), R.color.list_item_nav_drawer_selected_item_text_color));
+         //   Toast.makeText(navDrawer.activity.getBaseContext(),navDrawer.activity.toString(), Toast.LENGTH_SHORT).show();
 
             } else {
                 view.setBackground(null);
@@ -177,8 +183,8 @@ public class NavDrawer {
     public static class ActivityNavDrawerItem extends BasicNavDrawerItem {
         private final Class targetActivity;
 
-        public ActivityNavDrawerItem(Class targetActivity, String text, String batch, int iconDrawable, int containerId) {
-            super(text, batch, iconDrawable, containerId);
+        public ActivityNavDrawerItem(Class targetActivity, String text, String badge, int iconDrawable, int containerId) {
+            super(text, badge, iconDrawable, containerId);
             this.targetActivity = targetActivity;
         }
 
@@ -194,11 +200,14 @@ public class NavDrawer {
         @Override
         public void onClick(View v) {
             navDrawer.setOpen(false);
+
             if (navDrawer.activity.getClass() == targetActivity) {
                 return;
             }
+
             super.onClick(v);
 
+           // Toast.makeText(navDrawer.activity.getBaseContext(), navDrawer.activity.getLocalClassName(), Toast.LENGTH_LONG).show();
             //animation
             navDrawer.activity.fadeOut(new BaseActivity.FadeOutListener() {
                 @Override
@@ -207,7 +216,8 @@ public class NavDrawer {
                     navDrawer.activity.finish();
                 }
             });
-
+//            navDrawer.activity.startActivity(new Intent(navDrawer.activity, targetActivity));
+//            navDrawer.activity.finish();
         }
     }
 }
