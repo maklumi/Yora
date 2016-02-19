@@ -8,4 +8,10 @@
         android:title="Edit"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/activity_profile_menuChangePassword"
+        android:icon="@drawable/ic_clipboard"
+        android:title="Change Password"
+        app:showAsAction="always"/>
+
 </menu>

@@ -1,5 +1,6 @@
 package com.example.maklumi.yora.activities;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -13,8 +14,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
+import com.example.maklumi.yora.dialogs.ChangePasswordDialog;
 import com.example.maklumi.yora.infrastructure.User;
 import com.example.maklumi.yora.views.MainNavDrawer;
 import com.soundcloud.android.crop.Crop;
@@ -30,6 +33,7 @@ import java.util.List;
 public class ProfileActivity extends BaseAuthenticatedActivity implements View.OnClickListener {
 
     private static final int REQUEST_SELECT_IMAGE = 100;
+
     private ImageView avatarView;
     private View avatarProgressFrame;
     private File tempOutputFile;
@@ -91,7 +95,8 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         int viewId = v.getId();
 
         if (viewId == R.id.activity_profile_change_avatar || viewId == R.id.activity_profile_avatar)
-           // changeAvatar();
+            changeAvatar();
+      //  Crop.pickImage(this);
         return;
     }
 
@@ -112,19 +117,19 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
 
         Intent chooser = Intent.createChooser(selectImageIntent, "Chooser Avatar");
         chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, otherImageCaptureIntents.toArray(
-                new Parcelable[otherImageCaptureActivities.size()]
-        ));
+                new Parcelable[otherImageCaptureActivities.size()]));
 
         startActivityForResult(chooser, REQUEST_SELECT_IMAGE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Toast.makeText(this, "result " + resultCode + " request " + requestCode, Toast.LENGTH_LONG).show();
         if (requestCode != RESULT_OK) {
             tempOutputFile.delete();
             return;
         }
-        if (resultCode == REQUEST_SELECT_IMAGE) {
+        if (requestCode == REQUEST_SELECT_IMAGE) {
             Uri outputFile;
             Uri tempFileUri = Uri.fromFile(tempOutputFile);
 
@@ -134,16 +139,27 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
                 outputFile = tempFileUri;
 
             // my change from original code on new crop
-//            Crop.of(tempFileUri, outputFile)
-//            .asSquare()
-//            .start(this);
+            Crop.of(outputFile, tempFileUri).asSquare().start(this);
 
-        } else if (requestCode == Crop.REQUEST_CROP) {
+
+//} else if (requestCode == Crop.REQUEST_CROP) {
+        } else if (requestCode == REQUEST_SELECT_IMAGE && resultCode == RESULT_OK) {
             //TODO send tempfileoutput to server
+            avatarView.setImageResource(0);
             avatarView.setImageURI(Uri.fromFile(tempOutputFile));
+         //   handleCrop(resultCode, data);
 
         }
 
+    }
+
+
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            avatarView.setImageURI(Crop.getOutput(result));
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -159,6 +175,12 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         
         if (itemId == R.id.activity_profile_menuEdit){
             changeState(STATE_EDITING);
+            return true;
+        } else if (itemId == R.id.activity_profile_menuChangePassword) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction().addToBackStack(null);
+
+            ChangePasswordDialog dialog = new ChangePasswordDialog();
+            dialog.show(transaction, null);
             return true;
         }
         return false;
