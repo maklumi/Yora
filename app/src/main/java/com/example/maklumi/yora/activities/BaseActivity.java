@@ -11,6 +11,7 @@ import android.view.View;
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.infrastructure.YoraApplication;
 import com.example.maklumi.yora.views.NavDrawer;
+import com.squareup.otto.Bus;
 
 /**
  * Created by Maklumi on 15-02-16.
@@ -20,6 +21,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected Toolbar toolbar;
     protected NavDrawer navDrawer;
     protected boolean isTablet;
+    protected Bus bus;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -36,9 +38,18 @@ public abstract class BaseActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         application = (YoraApplication) getApplication();
+        bus = application.getBus();
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         isTablet = (metrics.widthPixels / metrics.density) >= 600;
+
+        bus.register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bus.unregister(this);
     }
 
     protected void setNavDrawer(NavDrawer drawer){

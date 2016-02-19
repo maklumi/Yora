@@ -1,6 +1,8 @@
 package com.example.maklumi.yora.activities;
 
+import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -19,8 +21,10 @@ import android.widget.Toast;
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.dialogs.ChangePasswordDialog;
 import com.example.maklumi.yora.infrastructure.User;
+import com.example.maklumi.yora.services.Account;
 import com.example.maklumi.yora.views.MainNavDrawer;
 import com.soundcloud.android.crop.Crop;
+import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,13 +46,16 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
     private static final int STATE_EDITING=2;
     
     private static final String BUNDLE_STATE = "BUNDLE_STATE";
+
+    private static boolean isProgressBarVisible;
     
     private int currentState;
     private EditText displayNameText;
     private EditText emailText;
     private View changeAvatarButton;
     private ActionMode editProfileActionMode;
-    
+
+    private Dialog progressDialog;
     
     @Override
     protected void onYoraCreate(Bundle savedInstance) {
@@ -88,6 +95,9 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         } else {
             changeState(savedInstance.getInt(BUNDLE_STATE));
         }
+
+        if (isProgressBarVisible)
+            setProgressBarVisible(true);
     }
 
     @Override
@@ -144,15 +154,52 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
 
 //} else if (requestCode == Crop.REQUEST_CROP) {
         } else if (requestCode == REQUEST_SELECT_IMAGE && resultCode == RESULT_OK) {
-            //TODO send tempfileoutput to server
-            avatarView.setImageResource(0);
-            avatarView.setImageURI(Uri.fromFile(tempOutputFile));
+            //  send tempfileoutput to server
+            avatarProgressFrame.setVisibility(View.VISIBLE);
+            bus.post(new Account.ChangeAvatarRequest(Uri.fromFile(tempOutputFile)));
+//            avatarView.setImageResource(0);
+//            avatarView.setImageURI(Uri.fromFile(tempOutputFile));
          //   handleCrop(resultCode, data);
 
         }
 
     }
 
+    @Subscribe
+    public void onAvatarUpdated(Account.ChangeAvatarResponse response){
+        avatarProgressFrame.setVisibility(View.GONE);
+
+        if (!response.didSucceed())
+            response.showErrorToast(this);
+
+    }
+
+
+    @Subscribe
+    public void onProfileUpdated(Account.UpdateProfileResponse response){
+        if (!response.didSucceed()){
+            response.showErrorToast(this);
+            changeState(STATE_EDITING);
+        }
+
+            displayNameText.setError(response.getPropertyErrors("displayName"));
+            emailText.setError(response.getPropertyErrors("email"));
+            setProgressBarVisible(false);
+    }
+
+    private void setProgressBarVisible(boolean visible) {
+        if (visible) {
+            progressDialog = new ProgressDialog.Builder(this)
+                    .setTitle("Updating Profile")
+                    .setCancelable(false)
+                    .show();
+        } else if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+
+        isProgressBarVisible = visible;
+    }
 
     private void handleCrop(int resultCode, Intent result) {
         if (resultCode == RESULT_OK) {
@@ -231,13 +278,19 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             int itemId = item.getItemId();
 
             if (itemId == R.id.activity_profile_edit_menuDone){
-                //TODO send update request
-                User user = application.getAuth().getUser();
-                user.setDisplayName(displayNameText.getText().toString());
-                user.setEmail(emailText.getText().toString());
+//                send update request
+//                User user = application.getAuth().getUser();
+//                user.setDisplayName(displayNameText.getText().toString());
+//                user.setEmail(emailText.getText().toString());
+                setProgressBarVisible(true);
                 changeState(STATE_VIEWING);
+                bus.post(new Account.UpdateProfileRequest(displayNameText.getText().toString(),
+                        emailText.getText().toString()));
+
+
                 return true;
             }
+
             return false;
 
         }

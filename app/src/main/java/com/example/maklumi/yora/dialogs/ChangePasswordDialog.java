@@ -2,12 +2,15 @@ package com.example.maklumi.yora.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
+import com.example.maklumi.yora.services.Account;
+import com.squareup.otto.Subscribe;
 
 /**
  * Created by HomePC on 19/2/2016.
@@ -16,6 +19,7 @@ public class ChangePasswordDialog extends BaseDialogFragment implements View.OnC
     private EditText currentPassword;
     private EditText newPassword;
     private EditText confirmNewPassword;
+    private Dialog progressDialog;
 
 
     @Override
@@ -44,8 +48,35 @@ public class ChangePasswordDialog extends BaseDialogFragment implements View.OnC
 
     @Override
     public void onClick(View view) {
-        //TODO change password to server
-        Toast.makeText(getActivity(), "Password updated", Toast.LENGTH_SHORT).show();
-        dismiss();
+        //change password to server
+//        Toast.makeText(getActivity(), "Password updated", Toast.LENGTH_SHORT).show();
+//        dismiss();
+        progressDialog = new ProgressDialog.Builder(getActivity())
+                .setTitle("Changing Password")
+                .setCancelable(false)
+                .show();
+
+        bus.post(new Account.ChangePasswordRequest(
+                currentPassword.getText().toString(),
+                newPassword.getText().toString(),
+                confirmNewPassword.getText().toString()
+        ));
+
+    }
+
+    @Subscribe
+    public void passwordChanged(Account.ChangePasswordResponse response){
+        if (response.didSucceed()){
+            Toast.makeText(getActivity(), "Password Updated", Toast.LENGTH_LONG).show();
+            dismiss();
+            application.getAuth().getUser().setHasPassword(true);
+            return;
+        }
+
+        currentPassword.setError(response.getPropertyErrors("currentPassword"));
+        newPassword.setError(response.getPropertyErrors("newPassword"));
+        confirmNewPassword.setError(response.getPropertyErrors("confirmNewPassword"));
+
+        response.showErrorToast(getActivity());
     }
 }
