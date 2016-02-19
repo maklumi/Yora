@@ -27,7 +27,7 @@
             android:layout_toEndOf="@id/include_man_nav_drawer_avatar"
             android:layout_alignTop="@id/include_man_nav_drawer_avatar"
             android:id="@+id/include_man_nav_drawer_displayName"
-            android:text="Harun Din"
+            android:text="Harun Di"
             android:textColor="@color/whito"
             />
     </RelativeLayout>

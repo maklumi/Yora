@@ -42,7 +42,7 @@ public class NavDrawer {
                     "the ids of drawer_layout and nav_drawer");
 
         Toolbar toolbar = activity.getToolbar();
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        toolbar.setNavigationIcon(R.drawable.ic_bug);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,14 +57,14 @@ public class NavDrawer {
     }
 
     public boolean isOpen() {
-        return drawerLayout.isDrawerOpen(Gravity.START);
+        return drawerLayout.isDrawerOpen(Gravity.LEFT);
     }
 
     public void setOpen(boolean isOpen){
         if (isOpen)
-            drawerLayout.openDrawer(Gravity.START);
+            drawerLayout.openDrawer(Gravity.LEFT);
         else
-            drawerLayout.closeDrawer(Gravity.START);
+            drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
     public void setSelectedItem(NavDrawerItem item){
@@ -140,8 +140,6 @@ public class NavDrawer {
             if (isSelected) {
                 view.setBackgroundResource(R.drawable.list_item_nav_drawer_selected_item_background);
                 textView.setTextColor(navDrawer.activity.getResources().getColor(R.color.list_item_nav_drawer_selected_item_text_color));
-              //  textView.setTextColor(ContextCompat.getColor(navDrawer.activity.getBaseContext(), R.color.list_item_nav_drawer_selected_item_text_color));
-         //   Toast.makeText(navDrawer.activity.getBaseContext(),navDrawer.activity.toString(), Toast.LENGTH_SHORT).show();
 
             } else {
                 view.setBackground(null);
@@ -201,23 +199,23 @@ public class NavDrawer {
         public void onClick(View v) {
             navDrawer.setOpen(false);
 
-            if (navDrawer.activity.getClass() == targetActivity) {
+            final BaseActivity activity = navDrawer.activity;
+
+            if (activity.getClass() == targetActivity) {
                 return;
             }
 
             super.onClick(v);
 
-           // Toast.makeText(navDrawer.activity.getBaseContext(), navDrawer.activity.getLocalClassName(), Toast.LENGTH_LONG).show();
-            //animation
-            navDrawer.activity.fadeOut(new BaseActivity.FadeOutListener() {
+
+            activity.fadeOut(new BaseActivity.FadeOutListener() {
                 @Override
                 public void onFadeOutEnd() {
-                    navDrawer.activity.startActivity(new Intent(navDrawer.activity, targetActivity));
-                    navDrawer.activity.finish();
+                    activity.startActivity(new Intent(activity, targetActivity));
+                    activity.finish();
                 }
             });
-//            navDrawer.activity.startActivity(new Intent(navDrawer.activity, targetActivity));
-//            navDrawer.activity.finish();
+
         }
     }
 }

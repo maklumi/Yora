@@ -1,5 +1,6 @@
 package com.example.maklumi.yora.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,8 +16,10 @@ import com.example.maklumi.yora.R;
  */
 public class LoginFragment extends BaseFragment implements View.OnClickListener {
     // show view
-private Button loginButton;
+    private Button loginButton;
     private Callbacks callbacks;
+
+
 
     @Nullable
     @Override
@@ -27,15 +30,19 @@ private Button loginButton;
 
         loginButton = (Button) view.findViewById(R.id.fragment_login_loginButton);
 
-        if (loginButton!=null)
+        if (loginButton!=null) //
             loginButton.setOnClickListener(this);
         return view;
+
+
     }
 
 
     @Override
     public void onClick(View v) {
         if (v == loginButton){
+            application.getAuth().getUser().setLoggedIn(true);
+            if (callbacks != null)
             callbacks.onLoggedIn();
         }
     }
@@ -45,10 +52,9 @@ private Button loginButton;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        callbacks = (Callbacks) context;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        callbacks = (Callbacks) activity;
     }
 
     @Override

@@ -20,7 +20,8 @@ public class LoginNarrowActivity extends BaseActivity implements  LoginFragment.
 
         setContentView(R.layout.activity_login_narrow);
 
-        loginNarrowButton =  findViewById(R.id.fragment_login_loginButton);
+      //  loginNarrowButton =  findViewById(R.id.fragment_login_loginButton);
+
     }
 
     @Override

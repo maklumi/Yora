@@ -12,8 +12,8 @@ public class MainActivity extends BaseAuthenticatedActivity {
 
     @Override
     protected void onYoraCreate(Bundle savedInstance) {
-    setContentView(R.layout.activity_main);
-      //  toolbar.setTitle("Inbox");
+        setContentView(R.layout.activity_main);
+      //  toolbar.setTitle("Inbox"); <-- no effect
         getSupportActionBar().setTitle("Inbox");
 
         setNavDrawer(new MainNavDrawer(this));

@@ -3,7 +3,7 @@ import android.animation.Animator;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -15,7 +15,7 @@ import com.example.maklumi.yora.views.NavDrawer;
 /**
  * Created by Maklumi on 15-02-16.
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends ActionBarActivity {
     protected YoraApplication application;
     protected Toolbar toolbar;
     protected NavDrawer navDrawer;
@@ -24,7 +24,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
-        toolbar=(Toolbar)findViewById(R.id.include_toolbar);
+
+        toolbar = (Toolbar)findViewById(R.id.include_toolbar);
 
         if (toolbar!= null)
             setSupportActionBar(toolbar);
@@ -45,9 +46,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         this.navDrawer.create();
 
         //disable native animation
-        overridePendingTransition(0,0);
+        overridePendingTransition(0,0); //(enteranim, exitanim)
+
         View rootView = findViewById(android.R.id.content);
-        rootView.setAlpha(0);
+        rootView.setAlpha(0); //completely transparent, zero opaque
         rootView.animate().alpha(1).setDuration(150).start();
     }
 

@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+      //  super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) return;; //eg press back button
 
@@ -72,7 +72,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void finishLogin() {
-        application.getAuth().getUser().setLoggedIn(true); //temp
+       // application.getAuth().getUser().setLoggedIn(true); //temp
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
