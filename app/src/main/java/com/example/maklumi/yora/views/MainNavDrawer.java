@@ -12,6 +12,8 @@ import com.example.maklumi.yora.activities.MainActivity;
 import com.example.maklumi.yora.activities.ProfileActivity;
 import com.example.maklumi.yora.activities.SentMessagesActivity;
 import com.example.maklumi.yora.infrastructure.User;
+import com.example.maklumi.yora.services.Account;
+import com.squareup.otto.Subscribe;
 
 /**
  * Created by Maklumi on 17-02-16.
@@ -45,5 +47,11 @@ public class MainNavDrawer extends NavDrawer {
 
         //todo change avatar
 
+    }
+
+    @Subscribe
+    public void onUserDetailsUpdated(Account.UserDetailsUpdatedEvent event){
+        // TODO: 20-02-16 update avatar url
+        displayNameText.setText(event.user.getDisplayName());
     }
 }

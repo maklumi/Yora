@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -134,8 +135,8 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Toast.makeText(this, "result " + resultCode + " request " + requestCode, Toast.LENGTH_LONG).show();
-        if (requestCode != RESULT_OK) {
+
+        if (resultCode != RESULT_OK) {
             tempOutputFile.delete();
             return;
         }
@@ -151,16 +152,11 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             // my change from original code on new crop
             Crop.of(outputFile, tempFileUri).asSquare().start(this);
 
+        } else if (requestCode == Crop.REQUEST_CROP) {
 
-//} else if (requestCode == Crop.REQUEST_CROP) {
-        } else if (requestCode == REQUEST_SELECT_IMAGE && resultCode == RESULT_OK) {
-            //  send tempfileoutput to server
             avatarProgressFrame.setVisibility(View.VISIBLE);
             bus.post(new Account.ChangeAvatarRequest(Uri.fromFile(tempOutputFile)));
-//            avatarView.setImageResource(0);
-//            avatarView.setImageURI(Uri.fromFile(tempOutputFile));
-         //   handleCrop(resultCode, data);
-
+            avatarView.setImageURI(Uri.fromFile(tempOutputFile));
         }
 
     }
@@ -172,6 +168,7 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         if (!response.didSucceed())
             response.showErrorToast(this);
 
+        avatarProgressFrame.setVisibility(View.GONE);
     }
 
 
@@ -185,7 +182,9 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             displayNameText.setError(response.getPropertyErrors("displayName"));
             emailText.setError(response.getPropertyErrors("email"));
             setProgressBarVisible(false);
+
     }
+
 
     private void setProgressBarVisible(boolean visible) {
         if (visible) {
@@ -201,13 +200,11 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         isProgressBarVisible = visible;
     }
 
-    private void handleCrop(int resultCode, Intent result) {
-        if (resultCode == RESULT_OK) {
-            avatarView.setImageURI(Crop.getOutput(result));
-        } else if (resultCode == Crop.RESULT_ERROR) {
-            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
-        }
+    @Subscribe
+    public void onUserDetailsUpdated(Account.UserDetailsUpdatedEvent event){
+        getSupportActionBar().setTitle(event.user.getDisplayName());
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -224,7 +221,9 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             changeState(STATE_EDITING);
             return true;
         } else if (itemId == R.id.activity_profile_menuChangePassword) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction().addToBackStack(null);
+            FragmentTransaction transaction = getFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null);
 
             ChangePasswordDialog dialog = new ChangePasswordDialog();
             dialog.show(transaction, null);
@@ -278,10 +277,7 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             int itemId = item.getItemId();
 
             if (itemId == R.id.activity_profile_edit_menuDone){
-//                send update request
-//                User user = application.getAuth().getUser();
-//                user.setDisplayName(displayNameText.getText().toString());
-//                user.setEmail(emailText.getText().toString());
+
                 setProgressBarVisible(true);
                 changeState(STATE_VIEWING);
                 bus.post(new Account.UpdateProfileRequest(displayNameText.getText().toString(),

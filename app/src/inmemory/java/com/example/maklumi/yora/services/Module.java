@@ -10,7 +10,6 @@ import com.example.maklumi.yora.infrastructure.YoraApplication;
 public class Module {
     public static void register(YoraApplication application)
     {
-        Log.e("Module", "INMEMORY REGISTER MODULE CALLED");
-        new InMemoryAccountService(application);
+       new InMemoryAccountService(application);
     }
 }

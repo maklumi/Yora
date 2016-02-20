@@ -48,9 +48,7 @@ public class ChangePasswordDialog extends BaseDialogFragment implements View.OnC
 
     @Override
     public void onClick(View view) {
-        //change password to server
-//        Toast.makeText(getActivity(), "Password updated", Toast.LENGTH_SHORT).show();
-//        dismiss();
+
         progressDialog = new ProgressDialog.Builder(getActivity())
                 .setTitle("Changing Password")
                 .setCancelable(false)
@@ -70,13 +68,11 @@ public class ChangePasswordDialog extends BaseDialogFragment implements View.OnC
         progressDialog = null;
 
         if (response.didSucceed()){
-            Toast.makeText(getActivity(), "Password Updated", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Password Updated", Toast.LENGTH_SHORT).show();
             dismiss();
             application.getAuth().getUser().setHasPassword(true);
             return;
         }
-
-
 
         currentPassword.setError(response.getPropertyErrors("currentPassword"));
         newPassword.setError(response.getPropertyErrors("newPassword"));
