@@ -17,6 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        inmemory {
+            applicationId "com.example.maklumi.yora.inmemory"
+        }
+
+        live {
+            applicationId "com.example.maklumi.yora"
+        }
+    }
 }
 
 dependencies {
