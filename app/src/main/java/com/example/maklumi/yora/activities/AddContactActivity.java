@@ -7,11 +7,10 @@ import com.example.maklumi.yora.R;
 /**
  * Created by Maklumi on 21-02-16.
  */
-public class ContactActivity extends BaseAuthenticatedActivity {
-    public static final String EXTRA_USER_DETAILS = "EXTRA_USER_DETAILS";
-
+public class AddContactActivity extends BaseAuthenticatedActivity {
+    public static final String RESULT_CONTACT = "RESULT_CONTACT";
     @Override
     protected void onYoraCreate(Bundle savedInstance) {
-        setContentView(R.layout.activity_contact);
+        setContentView(R.layout.activity_add_contact);
     }
 }

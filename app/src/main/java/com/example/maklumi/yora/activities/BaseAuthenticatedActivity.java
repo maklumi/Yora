@@ -13,7 +13,16 @@ public abstract class BaseAuthenticatedActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
 
         if (!application.getAuth().getUser().isLoggedIn()) {
-            startActivity(new Intent(this, LoginActivity.class));
+
+            if (application.getAuth().hasAuthToken()) {
+                Intent intent = new Intent(this, AuthenticationActivity.class);
+                intent.putExtra(AuthenticationActivity.EXTRA_RETURN_TO_ACTIVITY, getClass().getName());
+                startActivity(intent);
+            } else {
+                startActivity(new Intent(this, LoginActivity.class ));
+            }
+
+
             finish();
             return;
         }
