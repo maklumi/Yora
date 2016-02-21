@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.example.maklumi.yora.R;
+import com.example.maklumi.yora.infrastructure.ActionScheduler;
 import com.example.maklumi.yora.infrastructure.YoraApplication;
 import com.example.maklumi.yora.views.NavDrawer;
 import com.squareup.otto.Bus;
@@ -22,16 +23,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected NavDrawer navDrawer;
     protected boolean isTablet;
     protected Bus bus;
-
-    @Override
-    public void setContentView(@LayoutRes int layoutResID) {
-        super.setContentView(layoutResID);
-
-        toolbar = (Toolbar)findViewById(R.id.include_toolbar);
-
-        if (toolbar!= null)
-            setSupportActionBar(toolbar);
-    }
+    protected ActionScheduler scheduler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +31,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         application = (YoraApplication) getApplication();
         bus = application.getBus();
+        scheduler = new ActionScheduler(application);
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         isTablet = (metrics.widthPixels / metrics.density) >= 600;
@@ -46,11 +39,38 @@ public abstract class BaseActivity extends ActionBarActivity {
         bus.register(this);
     }
 
+    public ActionScheduler getScheduler() {
+        return scheduler;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        scheduler.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        scheduler.onPause();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         bus.unregister(this);
         if (navDrawer != null) navDrawer.destroy();
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+
+        toolbar = (Toolbar)findViewById(R.id.include_toolbar);
+        if (toolbar!= null) {
+            setSupportActionBar(toolbar);
+        }
+
     }
 
     protected void setNavDrawer(NavDrawer drawer){

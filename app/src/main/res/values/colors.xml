@@ -5,5 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="whito">#FFFFFF</color>
     <color name="list_item_nav_drawer_selected_item_text_color">#2896f3</color>
+    <color name="contacts_pending_contact_request">#607D8B</color>
 
 </resources>
