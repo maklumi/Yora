@@ -16,4 +16,8 @@
         <item name="android:dividerHeight">0dp</item>
     </style>
 
+    <style name="AddContactTheme" parent="AppTheme">
+        <item name="colorPrimary">#D7CCC8</item>
+    </style>
+
 </resources>

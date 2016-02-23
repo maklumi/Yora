@@ -46,7 +46,7 @@ public class SentMessagesActivity extends BaseAuthenticatedActivity implements M
 
         progressFrame = findViewById(R.id.activity_sent_messages_progressFrame);
 
-        scheduler.postEveryMilliseconds(new Messages.SearchMessagesRequest(true, false), 1000 * 60 * 3);
+        scheduler.postEveryMilliseconds(new Messages.SearchMessagesRequest( true, false), 1000 * 60 * 3);
     }
 
     @Override

@@ -62,4 +62,62 @@ public final class Contacts {
     public static class RespondToContactRequestResponse extends ServiceResponse {
 
     }
+
+    public static class RemoveContactResponse extends ServiceResponse {
+        public int RemoveContactId;
+    }
+
+
+    public static class RemoveContactRequest {
+        public int ContactId;
+
+        public RemoveContactRequest(int contactId){
+            ContactId = contactId;
+        }
+    }
+
+    public static class SearchUserRequest {
+        public String Query;
+
+        public SearchUserRequest(String query) {
+            Query = query;
+        }
+    }
+
+    public static class SearchUserResponse extends ServiceResponse {
+        public List<UserDetails> Users;
+        public String Query;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

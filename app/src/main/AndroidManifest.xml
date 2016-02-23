@@ -22,9 +22,11 @@
         <activity android:name=".activities.ProfileActivity"/>
         <activity android:name=".activities.ContactsActivity"/>
         <activity android:name=".activities.ContactActivity"/>
-        <activity android:name=".activities.AddContactActivity"/>
+        <activity android:name=".activities.AddContactActivity"
+            android:theme="@style/AddContactTheme"/>
         <activity android:name=".activities.SentMessagesActivity"/>
         <activity android:name=".activities.MessageActivity"/>
+        <activity android:name=".activities.NewMessageActivity"/>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity android:name=".activities.AuthenticationActivity"/>
 

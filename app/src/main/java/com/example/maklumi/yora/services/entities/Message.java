@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Maklumi on 23-02-16.
@@ -30,6 +31,30 @@ public class Message implements Parcelable{
         this.otherUser = otherUser;
         this.isFromUs = isFromUs;
         this.isRead = isRead;
+    }
+
+    private Message(Parcel in){
+        id = in.readInt();
+        createdAt = new GregorianCalendar();
+        createdAt.setTimeInMillis(in.readLong());
+        shortMessage = in.readString();
+        longMessage = in.readString();
+        imageUrl = in.readString();
+        otherUser = (UserDetails) in.readParcelable(UserDetails.class.getClassLoader());
+        isFromUs = in.readByte() == 1;
+        isRead = in.readByte() == 1;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeLong(createdAt.getTimeInMillis());
+        dest.writeString(shortMessage);
+        dest.writeString(longMessage);
+        dest.writeString(imageUrl);
+        dest.writeParcelable(otherUser, 0);
+        dest.writeByte((byte) (isFromUs ? 1:0));
+        dest.writeByte((byte) (isRead ? 1:0));
     }
 
     public int getId() {
@@ -68,25 +93,20 @@ public class Message implements Parcelable{
         return isSelected;
     }
 
+
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
-
 
     @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
-
     public static final Creator<Message> CREATOR = new Creator<Message>() {
         @Override
         public Message createFromParcel(Parcel source) {
-            return null;
+            return new Message(source);
         }
 
         @Override
