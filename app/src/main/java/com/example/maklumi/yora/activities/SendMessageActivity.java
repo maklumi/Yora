@@ -5,15 +5,19 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.services.Messages;
 import com.example.maklumi.yora.services.entities.UserDetails;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -22,8 +26,9 @@ import com.squareup.picasso.Picasso;
 public class SendMessageActivity extends BaseAuthenticatedActivity implements View.OnClickListener {
     public static final String EXTRA_IMAGE_PATH = "EXTRA_IMAGE_PATH";
     public static final String EXTRA_CONTACT = "EXTRA_CONTACT";
+    public static final String RESULT_MESSAGE = "RESULT_MESSAGE";
 
-    public static final int MAX_IMAGE_HEIGHT = 1200;
+    public static final int MAX_IMAGE_HEIGHT = 1000;
     private static final String STATE_REQUEST = "STATE_REQUEST";
     private static final int REQUEST_SELECT_RECIPIENT = 1;
 
@@ -49,11 +54,11 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
         Uri imageUri = getIntent().getParcelableExtra(EXTRA_IMAGE_PATH);
         if (imageUri != null){
             ImageView imageView = (ImageView) findViewById(R.id.activity_send_message_image);
-            Picasso
-                    .with(this)
-                    .load(imageUri)
-                    .into(imageView);
+            Picasso picasso = Picasso.with(this);
+            picasso.invalidate(imageUri);
+            picasso.load(imageUri).into(imageView);
 
+            request.setImagePath(imageUri);
         }
 
         if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
@@ -77,6 +82,11 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
 
         recipientButton.setOnClickListener(this);
         updateButton();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(STATE_REQUEST, request);
     }
 
     @Override
@@ -106,5 +116,66 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
             request.setRecipient(selectedContact);
             updateButton();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_send_message, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.activity_send_message_menuSend){
+            sendMessage();
+            return true;
+        }
+        return false;
+
+    }
+
+    private void sendMessage() {
+        String message = messageEditText.getText().toString();
+        if (message.length() < 2 ) {
+            messageEditText.setError("Please enter a longer message");
+            return;
+        }
+
+        messageEditText.setError(null);
+
+        if (request.getRecipient() == null) {
+            Toast.makeText(this, "Please select a recipient", Toast.LENGTH_SHORT).show();
+            selectRecipient();
+            return;
+        }
+
+        progressFrame.setVisibility(View.VISIBLE);
+        progressFrame.setAlpha(0);
+        progressFrame.animate().alpha(1).setDuration(250).start();
+
+        request.setMessage(message);
+        bus.post(request);
+    }
+
+    @Subscribe
+    public void onMessageSent (Messages.SendMessageResponse response){
+        if (!response.didSucceed()) {
+            response.showErrorToast(this);
+            messageEditText.setError(response.getPropertyErrors("message"));
+            progressFrame.animate().alpha(0).setDuration(360).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    progressFrame.setVisibility(View.GONE);
+                }
+            })
+                    .start();
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.putExtra(RESULT_MESSAGE, response.Message);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

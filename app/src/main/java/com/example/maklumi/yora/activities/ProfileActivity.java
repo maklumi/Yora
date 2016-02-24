@@ -26,6 +26,7 @@ import com.example.maklumi.yora.services.Account;
 import com.example.maklumi.yora.views.MainNavDrawer;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,6 +88,10 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         
         User user = application.getAuth().getUser();
         getSupportActionBar().setTitle(user.getDisplayName());
+        Picasso
+                .with(this)
+                .load(user.getAvatarUrl())
+                .into(avatarView);
 
         if (savedInstance == null) { // cover for rotation of screen
             displayNameText.setText(user.getDisplayName());
@@ -202,7 +207,8 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
 
     @Subscribe
     public void onUserDetailsUpdated(Account.UserDetailsUpdatedEvent event){
-        getSupportActionBar().setTitle(event.user.getDisplayName());
+        getSupportActionBar().setTitle(event.User.getDisplayName());
+        Picasso.with(this).load(event.User.getAvatarUrl()).into(avatarView);
     }
 
 

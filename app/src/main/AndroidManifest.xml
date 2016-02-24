@@ -29,7 +29,8 @@
             android:theme="@style/AddContactTheme"/>
         <activity android:name=".activities.SentMessagesActivity"/>
         <activity android:name=".activities.MessageActivity"/>
-        <activity android:name=".activities.NewMessageActivity"/>
+        <activity android:name=".activities.NewMessageActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activities.SendMessageActivity"/>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity android:name=".activities.AuthenticationActivity"/>

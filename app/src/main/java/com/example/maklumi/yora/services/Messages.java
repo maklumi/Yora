@@ -42,7 +42,7 @@ public final class Messages {
         }
 
         public SearchMessagesRequest( boolean includeSentMessages, boolean includeReceivedMessages) {
-
+            FromContactId = -1;
             IncludeSentMessages = includeSentMessages;
             IncludeReceivedMessages = includeReceivedMessages;
         }
@@ -120,6 +120,28 @@ public final class Messages {
     }
 
     public static class SendMessageResponse extends ServiceResponse {
+        public String Message;
+    }
 
+    public static class MarkMessageAsReadRequest {
+        public int MessageId;
+
+        public MarkMessageAsReadRequest(int messageId){
+            MessageId = messageId;
+        }
+    }
+
+    public static class MarkMessageAsReadResponse extends ServiceResponse {}
+
+    public static class GetMessageDetailRequest {
+        public int id;
+
+        public GetMessageDetailRequest(int id) {
+            this.id = id;
+        }
+    }
+
+    public static class GetMessageDetailResponse extends ServiceResponse {
+        public Message Message;
     }
 }

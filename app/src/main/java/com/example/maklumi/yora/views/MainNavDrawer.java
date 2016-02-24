@@ -13,6 +13,7 @@ import com.example.maklumi.yora.activities.SentMessagesActivity;
 import com.example.maklumi.yora.infrastructure.User;
 import com.example.maklumi.yora.services.Account;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Maklumi on 17-02-16.
@@ -43,13 +44,13 @@ public class MainNavDrawer extends NavDrawer {
         User loggedInUser = activity.getYoraApplication().getAuth().getUser();
         displayNameText.setText(loggedInUser.getDisplayName());
 
-        //todo change avatar
+        Picasso.with(activity).load(loggedInUser.getAvatarUrl()).into(avatarImage);
 
     }
 
     @Subscribe
     public void onUserDetailsUpdated(Account.UserDetailsUpdatedEvent event){
-        // TODO: 20-02-16 update avatar url
-        displayNameText.setText(event.user.getDisplayName());
+        Picasso.with(activity).load(event.User.getAvatarUrl()).into(avatarImage);
+        displayNameText.setText(event.User.getDisplayName());
     }
 }

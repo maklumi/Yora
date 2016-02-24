@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
+import com.example.maklumi.yora.services.entities.Message;
 import com.example.maklumi.yora.services.entities.UserDetails;
 import com.example.maklumi.yora.views.CameraPreview;
 
@@ -134,7 +135,7 @@ public class NewMessageActivity extends BaseAuthenticatedActivity implements Vie
         Bitmap bitmap = processBitmap(data);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, out);
 
         File outputFile =  new File(getCacheDir(), "temp_image");
         outputFile.delete();
@@ -205,6 +206,12 @@ public class NewMessageActivity extends BaseAuthenticatedActivity implements Vie
         if (requestCode == REQUEST_SEND_MESSAGE && resultCode == RESULT_OK ) {
             setResult(RESULT_OK);
             finish();
+
+            Message message = data.getParcelableExtra(SendMessageActivity.RESULT_MESSAGE);
+
+            Intent intent = new Intent();
+            intent.putExtra(MessageActivity.EXTRA_MESSAGE, intent);
+            startActivity(intent);
         }
     }
 }

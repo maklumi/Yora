@@ -5,15 +5,18 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Created by HomePC on 19/2/2016.
  */
 public abstract class ServiceResponse {
     private static final String TAG = "ServiceResponse";
+
     private String operationError; //wide scale
     private HashMap <String, String> propertyErrors; //validation errors eg email format
     private boolean isCritical; //eg not network connected
+    private TreeMap<String, String> propertyErrorCaseInsensitive;
 
     public ServiceResponse() {
         propertyErrors = new HashMap<>();
@@ -37,6 +40,11 @@ public abstract class ServiceResponse {
     }
 
     public String getPropertyErrors(String property) {
+
+        if (propertyErrorCaseInsensitive == null || propertyErrorCaseInsensitive.size() != propertyErrors.size()){
+            propertyErrorCaseInsensitive = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            propertyErrorCaseInsensitive.putAll(propertyErrors);
+        }
         return propertyErrors.get(property);
     }
 
@@ -50,6 +58,11 @@ public abstract class ServiceResponse {
 
     public void setIsCritical(boolean isCritical) {
         this.isCritical = isCritical;
+    }
+
+    public void setIsCriticalError (String criticalError){
+        isCritical = true;
+        operationError = criticalError;
     }
 
     public boolean didSucceed() {

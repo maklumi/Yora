@@ -1,8 +1,10 @@
 package com.example.maklumi.yora.activities;
 import android.animation.Animator;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -17,7 +19,7 @@ import com.squareup.otto.Bus;
 /**
  * Created by Maklumi on 15-02-16.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
     private boolean isRegisteredWithBus;
 
     protected YoraApplication application;
@@ -26,6 +28,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected boolean isTablet;
     protected Bus bus;
     protected ActionScheduler scheduler;
+    protected SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +93,17 @@ public abstract class BaseActivity extends ActionBarActivity {
             setSupportActionBar(toolbar);
         }
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setColorSchemeColors(
+                    Color.parseColor("#ff0000ff"),
+                    Color.parseColor("#ff99cc00"),
+                    Color.parseColor("#ffff0022"),
+                    Color.parseColor("#ffff4444")
+            );
+        }
+
     }
 
     protected void setNavDrawer(NavDrawer drawer){
@@ -140,6 +154,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                 })
                 .setDuration(300)
                 .start();
+
+    }
+
+    @Override
+    public void onRefresh() {
 
     }
 

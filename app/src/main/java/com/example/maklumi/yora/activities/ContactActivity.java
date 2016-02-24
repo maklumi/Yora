@@ -26,6 +26,7 @@ import java.util.ArrayList;
  */
 public class ContactActivity extends BaseAuthenticatedActivity implements MessagesAdapter.OnMessageClickedListener {
     public static final String EXTRA_USER_DETAILS = "EXTRA_USER_DETAILS";
+    private static final int REQUEST_SEND_MESSAGE = 1;
 
     private UserDetails userDetails;
     private MessagesAdapter adapter;
@@ -81,8 +82,10 @@ public class ContactActivity extends BaseAuthenticatedActivity implements Messag
     @Subscribe
     public void onMessageReceived(final Messages.SearchMessagesResponse response){
         scheduler.invokeOnResume(Messages.SearchMessagesResponse.class, new Runnable() {
+
             @Override
             public void run() {
+                progressFrame.setVisibility(View.GONE);
                 if (!response.didSucceed()){
                     response.showErrorToast(ContactActivity.this);
                 }
@@ -94,7 +97,6 @@ public class ContactActivity extends BaseAuthenticatedActivity implements Messag
                 messages.addAll(response.Messages);
                 adapter.notifyItemRangeInserted(0, messages.size());
 
-                progressFrame.setVisibility(View.GONE);
             }
         });
     }
@@ -135,7 +137,7 @@ public class ContactActivity extends BaseAuthenticatedActivity implements Messag
         if (id == R.id.activity_contact_menuNewMessage){
             Intent intent = new Intent(this, NewMessageActivity.class);
             intent.putExtra(NewMessageActivity.EXTRA_CONTACT, userDetails);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_SEND_MESSAGE);
             return true;
         }
 
@@ -155,6 +157,14 @@ public class ContactActivity extends BaseAuthenticatedActivity implements Messag
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SEND_MESSAGE && resultCode == RESULT_OK) {
+            progressFrame.setVisibility(View.VISIBLE);
+            bus.post(new Messages.SearchMessagesRequest(userDetails.getId(), true, true));
+        }
     }
 }
 

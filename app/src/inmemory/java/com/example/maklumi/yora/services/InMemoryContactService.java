@@ -22,7 +22,7 @@ public class InMemoryContactService extends BaseInMemoryService {
         response.Requests =new ArrayList<>();
 
         for (int i= 0; i < 30; i++){
-            response.Requests.add(new ContactRequest(i, request.FromUs, createFakeUser(1, false), new GregorianCalendar()));
+            response.Requests.add(new ContactRequest(request.FromUs, createFakeUser(1, false), new GregorianCalendar()));
 
         }
 
@@ -39,7 +39,7 @@ public class InMemoryContactService extends BaseInMemoryService {
 
         }
 
-        postDelayed(response);
+        postDelayed(response, 2000);
     }
 
     @Subscribe

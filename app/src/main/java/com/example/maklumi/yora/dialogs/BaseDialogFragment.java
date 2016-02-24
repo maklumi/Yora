@@ -13,8 +13,6 @@ import com.squareup.otto.Bus;
 public class BaseDialogFragment extends DialogFragment {
     protected YoraApplication application;
     protected Bus bus;
-    protected ActionScheduler scheduler;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,8 +20,11 @@ public class BaseDialogFragment extends DialogFragment {
         scheduler = new ActionScheduler(application);
         bus = application.getBus();
 
+        scheduler = new ActionScheduler(application);
         bus.register(this);
     }
+
+    protected ActionScheduler scheduler;
 
     @Override
     public void onDestroy() {
