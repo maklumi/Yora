@@ -68,4 +68,18 @@ public class InMemoryMessagesService extends BaseInMemoryService {
         postDelayed(response, 2000);
     }
 
+    @Subscribe
+    public void sendMessage(Messages.SendMessageRequest request){
+        Messages.SendMessageResponse res = new Messages.SendMessageResponse();
+
+        if (request.getMessage().equals("error")) {
+            res.setOperationError("Error sending message");
+
+        } else if (request.getMessage().equals("error-message")) {
+            res.setPropertyErrors("message", "Invalid message");
+        }
+
+        postDelayed(res, 1500, 3000);
+    }
+
 }

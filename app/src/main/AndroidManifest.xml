@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.maklumi.yora">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,6 +30,7 @@
         <activity android:name=".activities.SentMessagesActivity"/>
         <activity android:name=".activities.MessageActivity"/>
         <activity android:name=".activities.NewMessageActivity"/>
+        <activity android:name=".activities.SendMessageActivity"/>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         <activity android:name=".activities.AuthenticationActivity"/>
 
