@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/activity_profile_menuEdit"
-        android:icon="@drawable/ic_edit_pen"
+        android:icon="@drawable/ic_mode_edit_white_24dp"
         android:title="Edit"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/activity_profile_menuChangePassword"
-        android:icon="@drawable/ic_clipboard"
+        android:icon="@drawable/ic_fingerprint_white_24dp"
         android:title="Change Password"
         app:showAsAction="always"/>
 

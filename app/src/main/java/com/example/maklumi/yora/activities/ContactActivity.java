@@ -61,7 +61,7 @@ public class ContactActivity extends BaseAuthenticatedActivity implements Messag
         recyclerView.setAdapter(adapter);
 
         getSupportActionBar().setTitle(userDetails.getDisplayName());
-        toolbar.setNavigationIcon(R.drawable.ic_face_tie);
+        toolbar.setNavigationIcon(R.drawable.ic_contacts_black_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -27,11 +27,11 @@ public class MainNavDrawer extends NavDrawer {
         super(activity);
 
         addItem(new ActivityNavDrawerItem(MainActivity.class, "Inbox", null, R.drawable.ic_email, R.id.include_man_nav_drawer_topItem));
-        addItem(new ActivityNavDrawerItem(SentMessagesActivity.class, "Sent messages", null, R.drawable.ic_sent_plane, R.id.include_man_nav_drawer_topItem));
-        addItem(new ActivityNavDrawerItem(ContactsActivity.class, "Contact", null, R.drawable.ic_contacts, R.id.include_man_nav_drawer_topItem));
-        addItem(new ActivityNavDrawerItem(ProfileActivity.class, "Profile", null, R.drawable.ic_contact_outline, R.id.include_man_nav_drawer_topItem));
+        addItem(new ActivityNavDrawerItem(SentMessagesActivity.class, "Sent messages", null, R.drawable.ic_send_black_24dp, R.id.include_man_nav_drawer_topItem));
+        addItem(new ActivityNavDrawerItem(ContactsActivity.class, "Contact", null, R.drawable.ic_contacts_black_24dp, R.id.include_man_nav_drawer_topItem));
+        addItem(new ActivityNavDrawerItem(ProfileActivity.class, "Profile", null, R.drawable.ic_person_black_24dp, R.id.include_man_nav_drawer_topItem));
 
-        addItem(new BasicNavDrawerItem("Logout", null, R.drawable.ic_exit, R.id.include_man_nav_drawer_bottomItem) {
+        addItem(new BasicNavDrawerItem("Logout", null, R.drawable.ic_exit_to_app_black_24dp, R.id.include_man_nav_drawer_bottomItem) {
             @Override
             public void onClick(View v) {
              activity.getYoraApplication().getAuth().logout();

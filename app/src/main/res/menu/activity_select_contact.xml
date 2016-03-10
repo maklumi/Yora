@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/activity_select_contact_menuAddContact"
-        android:icon="@drawable/ic_clipboard"
+        android:icon="@drawable/ic_fingerprint_white_24dp"
         android:title="Add Friend"
         app:showAsAction = "always"/>
 </menu>

@@ -10,7 +10,7 @@
     android:paddingTop="4dp"
     android:textStyle="normal"
     android:drawablePadding="4dp"
-    android:drawableEnd="@drawable/spinner_triangle"
+    android:drawableEnd="@drawable/ic_expand_more_black_24dp"
     >
 
 </TextView>

@@ -60,7 +60,7 @@ public class MessageActivity extends BaseAuthenticatedActivity implements View.O
         longMessage.setText("");
         progressFrame.setVisibility(View.GONE);
 
-        toolbar.setNavigationIcon(R.drawable.ic_checkmark);
+        toolbar.setNavigationIcon(R.drawable.ic_check_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

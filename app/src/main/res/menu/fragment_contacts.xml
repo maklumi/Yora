@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/fragment_contacts_menu_addContact"
-        android:icon="@drawable/ic_contacts"
+        android:icon="@drawable/ic_contacts_black_24dp"
         android:title="Add Contact"
         app:showAsAction="always"/>
 </menu>
