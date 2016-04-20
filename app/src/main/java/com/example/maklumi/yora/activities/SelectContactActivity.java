@@ -9,43 +9,35 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.maklumi.yora.R;
-import com.example.maklumi.yora.infrastructure.User;
 import com.example.maklumi.yora.services.Contacts;
 import com.example.maklumi.yora.services.entities.UserDetails;
 import com.example.maklumi.yora.views.UserDetailsAdapter;
 import com.squareup.otto.Subscribe;
 
-/**
- * Created by Maklumi on 24-02-16.
- */
+import java.util.List;
+
 public class SelectContactActivity extends BaseAuthenticatedActivity implements AdapterView.OnItemClickListener {
     public static final String RESULT_CONTACT = "RESULT_CONTACT";
 
-    private static final int REQUEST_ADD_CONTACT =1;
-
+    private static final int REQUEST_ADD_CONTACT = 1;
     private UserDetailsAdapter adapter;
 
     @Override
-    protected void onYoraCreate(Bundle savedInstance) {
+    protected void onYoraCreate(Bundle savedState) {
         setContentView(R.layout.activity_select_contact);
         getSupportActionBar().setTitle("Select Contact");
 
         adapter = new UserDetailsAdapter(this);
-        ListView listView = (ListView)findViewById(R.id.activity_select_contact_listView);
+        ListView listView = (ListView) findViewById(R.id.activity_select_contact_listView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
 
-        bus.post(new Contacts.GetContactRequest(true));
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        selectUser(adapter.getItem(position));
+        bus.post(new Contacts.GetContactsRequest(true));
     }
 
     @Subscribe
-    public void onContactsReceived(final Contacts.GetContactResponse response){
-        scheduler.invokeOnResume(Contacts.GetContactResponse.class, new Runnable() {
+    public void onContactsReceived(final Contacts.GetContactsResponse response) {
+        scheduler.invokeOnResume(Contacts.GetContactsResponse.class, new Runnable() {
             @Override
             public void run() {
                 response.showErrorToast(SelectContactActivity.this);
@@ -69,15 +61,21 @@ public class SelectContactActivity extends BaseAuthenticatedActivity implements 
             startActivityForResult(new Intent(this, AddContactActivity.class), REQUEST_ADD_CONTACT);
             return true;
         }
+
         return false;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ADD_CONTACT && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_ADD_CONTACT && resultCode == RESULT_OK) {
             UserDetails user = data.getParcelableExtra(AddContactActivity.RESULT_CONTACT);
             selectUser(user);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        selectUser(adapter.getItem(position));
     }
 
     private void selectUser(UserDetails user) {

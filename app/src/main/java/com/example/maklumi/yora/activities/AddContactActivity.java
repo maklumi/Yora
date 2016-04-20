@@ -1,11 +1,11 @@
 package com.example.maklumi.yora.activities;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -18,9 +18,8 @@ import com.example.maklumi.yora.services.entities.UserDetails;
 import com.example.maklumi.yora.views.UserDetailsAdapter;
 import com.squareup.otto.Subscribe;
 
-/**
- * Created by Maklumi on 21-02-16.
- */
+import java.util.List;
+
 public class AddContactActivity extends BaseAuthenticatedActivity implements AdapterView.OnItemClickListener {
     public static final String RESULT_CONTACT = "RESULT_CONTACT";
 
@@ -35,18 +34,17 @@ public class AddContactActivity extends BaseAuthenticatedActivity implements Ada
         @Override
         public void run() {
             lastQuery = searchView.getQuery().toString();
-            bus.post(new Contacts.SearchUserRequest(lastQuery));
+            progressFrame.setVisibility(View.VISIBLE);
+            bus.post(new Contacts.SearchUsersRequest(lastQuery));
         }
     };
 
-
-
     @Override
-    protected void onYoraCreate(Bundle savedInstance) {
+    protected void onYoraCreate(Bundle savedState) {
         setContentView(R.layout.activity_add_contact);
 
         adapter = new UserDetailsAdapter(this);
-        ListView listView = (ListView) findViewById(R.id.activity_add_contact_userListView);
+        ListView listView = (ListView) findViewById(R.id.activity_add_contact_usersListView);
         listView.setOnItemClickListener(this);
         listView.setAdapter(adapter);
 
@@ -61,23 +59,21 @@ public class AddContactActivity extends BaseAuthenticatedActivity implements Ada
         actionBar.setCustomView(searchView);
 
         searchView.setIconified(false);
-        searchView.setQueryHint("Search for user");
+        searchView.setQueryHint("Search for users...");
         searchView.setLayoutParams(new Toolbar.LayoutParams(
                 Toolbar.LayoutParams.MATCH_PARENT,
-                Toolbar.LayoutParams.MATCH_PARENT
-        ));
+                Toolbar.LayoutParams.MATCH_PARENT));
 
-        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
-
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(String s) {
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 if (query.length() < 3)
-                return true;
+                    return true;
 
                 handler.removeCallbacks(searchRunnable);
                 handler.postDelayed(searchRunnable, 750);
@@ -93,14 +89,13 @@ public class AddContactActivity extends BaseAuthenticatedActivity implements Ada
                 return true;
             }
         });
-
     }
 
     @Subscribe
-    public void onUserSearched(Contacts.SearchUserResponse response) {
+    public void onUsersSearched(Contacts.SearchUsersResponse response) {
         progressFrame.setVisibility(View.GONE);
 
-        if (!response.didSucceed()){
+        if (!response.didSucceed()) {
             response.showErrorToast(this);
             return;
         }
@@ -115,7 +110,6 @@ public class AddContactActivity extends BaseAuthenticatedActivity implements Ada
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setPositiveButton("Send Contact Request", new DialogInterface.OnClickListener() {
                     @Override
@@ -130,14 +124,13 @@ public class AddContactActivity extends BaseAuthenticatedActivity implements Ada
     }
 
     private void sendContactRequest(UserDetails user) {
-
         selectedUser = user;
         progressFrame.setVisibility(View.VISIBLE);
         bus.post(new Contacts.SendContactRequestRequest(user.getId()));
     }
 
     @Subscribe
-    public void onContactRequestSent (Contacts.SendContactRequestResponse response){
+    public void onContactRequestSent(Contacts.SendContactRequestResponse response) {
         if (!response.didSucceed()) {
             response.showErrorToast(this);
             progressFrame.setVisibility(View.GONE);

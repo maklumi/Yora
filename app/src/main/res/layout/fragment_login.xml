@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="user name"
+        android:hint="UserName"
         android:singleLine="true"
-        android:id="@+id/fragment_login_username"
+        android:id="@+id/fragment_login_userName"
         android:layout_marginBottom="8dp"/>
 
     <EditText
@@ -19,18 +19,17 @@
         android:singleLine="true"
         android:inputType="textPassword"
         android:layout_marginBottom="8dp"
-        android:layout_below="@+id/fragment_login_username"
+        android:layout_below="@id/fragment_login_userName"
         android:id="@+id/fragment_login_password"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="Log In"
         android:layout_below="@id/fragment_login_password"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/whito"
-        android:id="@+id/fragment_login_loginButton"
-        />
+        android:background="@color/primary_color_darker"
+        android:textColor="#ffffff"
+        android:id="@+id/fragment_login_loginButton"/>
 
     <ProgressBar
         android:layout_width="wrap_content"

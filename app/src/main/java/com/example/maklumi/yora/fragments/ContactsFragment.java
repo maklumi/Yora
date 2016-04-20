@@ -2,7 +2,6 @@ package com.example.maklumi.yora.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,44 +20,42 @@ import com.example.maklumi.yora.services.entities.UserDetails;
 import com.example.maklumi.yora.views.UserDetailsAdapter;
 import com.squareup.otto.Subscribe;
 
-/**
- * Created by Maklumi on 21-02-16.
- */
+import java.util.List;
+
 public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     private UserDetailsAdapter adapter;
     private View progressFrame;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        adapter = new UserDetailsAdapter((BaseActivity) getActivity());
+        adapter = new UserDetailsAdapter((BaseActivity)getActivity());
         progressFrame = view.findViewById(R.id.fragment_contacts_progressFrame);
 
         ListView listView = (ListView) view.findViewById(R.id.fragment_contacts_list);
-        listView.setEmptyView(view.findViewById(R.id.fragment_contacts_emptylist));
+        listView.setEmptyView(view.findViewById(R.id.fragment_contacts_emptyList));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
 
-        bus.post(new Contacts.GetContactRequest(false));
+        bus.post(new Contacts.GetContactsRequest(false));
+
         return view;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         UserDetails details = adapter.getItem(position);
-
         Intent intent = new Intent(getActivity(), ContactActivity.class);
         intent.putExtra(ContactActivity.EXTRA_USER_DETAILS, details);
         startActivity(intent);
     }
 
     @Subscribe
-    public void onContactResponse (final Contacts.GetContactResponse response){
-        scheduler.invokeOnResume(Contacts.GetContactResponse.class, new Runnable() {
+    public void onContactsResponse(final Contacts.GetContactsResponse response) {
+        scheduler.invokeOnResume(Contacts.GetContactsResponse.class, new Runnable() {
             @Override
             public void run() {
                 progressFrame.animate()
@@ -90,10 +87,11 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.fragment_contacts_menu_addContact){
+        if (item.getItemId() == R.id.fragment_contacts_menu_addContact) {
             startActivity(new Intent(getActivity(), AddContactActivity.class));
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

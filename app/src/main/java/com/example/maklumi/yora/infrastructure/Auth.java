@@ -6,11 +6,7 @@ import android.content.SharedPreferences;
 
 import com.example.maklumi.yora.activities.LoginActivity;
 
-/**
- * Created by Maklumi on 15-02-16.
- */
-public class Auth
-{
+public class Auth {
     private static final String AUTH_PREFERENCES = "AUTH_PREFERENCES";
     private static final String AUTH_PREFERENCES_TOKEN = "AUTH_PREFERENCES_TOKEN";
 
@@ -21,8 +17,8 @@ public class Auth
     private String authToken;
 
     public Auth(Context context) {
-        user = new User();
         this.context = context;
+        user = new User();
 
         preferences = context.getSharedPreferences(AUTH_PREFERENCES, Context.MODE_PRIVATE);
         authToken = preferences.getString(AUTH_PREFERENCES_TOKEN, null);
@@ -33,19 +29,20 @@ public class Auth
     }
 
     public String getAuthToken() {
-        return  authToken;
+        return authToken;
     }
 
     public boolean hasAuthToken() {
         return authToken != null && !authToken.isEmpty();
     }
 
-    public void setAuthToken(String authToken){
+    public void setAuthToken(String authToken) {
         this.authToken = authToken;
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(AUTH_PREFERENCES_TOKEN, authToken);
-        editor.commit();
+       // editor.commit();
+        editor.apply();
     }
 
     public void logout() {

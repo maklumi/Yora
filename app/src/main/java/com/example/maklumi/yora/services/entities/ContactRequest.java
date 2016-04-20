@@ -2,16 +2,16 @@ package com.example.maklumi.yora.services.entities;
 
 import java.util.Calendar;
 
-/**
- * Created by Maklumi on 21-02-16.
- */
 public class ContactRequest {
-
     private boolean isFromUs;
     private UserDetails user;
     private Calendar createdAt;
 
-
+    public ContactRequest(boolean isFromUs, UserDetails user, Calendar createdAt) {
+        this.isFromUs = isFromUs;
+        this.user = user;
+        this.createdAt = createdAt;
+    }
 
     public boolean isFromUs() {
         return isFromUs;
@@ -23,13 +23,5 @@ public class ContactRequest {
 
     public Calendar getCreatedAt() {
         return createdAt;
-    }
-
-    public ContactRequest( boolean isFromUs, UserDetails user, Calendar createdAt) {
-
-
-        this.isFromUs = isFromUs;
-        this.user = user;
-        this.createdAt = createdAt;
     }
 }

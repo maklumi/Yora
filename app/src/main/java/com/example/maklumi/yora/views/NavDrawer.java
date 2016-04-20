@@ -1,28 +1,21 @@
 package com.example.maklumi.yora.views;
 
 import android.content.Intent;
-import android.os.Debug;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.activities.BaseActivity;
 
 import java.util.ArrayList;
 
-
-/**
- * Created by Maklumi on 17-02-16.
- */
 public class NavDrawer {
     private ArrayList<NavDrawerItem> items;
     private NavDrawerItem selectedItem;
@@ -33,16 +26,15 @@ public class NavDrawer {
 
     public NavDrawer(BaseActivity activity) {
         this.activity = activity;
-        items= new ArrayList<>();
-        drawerLayout = (DrawerLayout)activity.findViewById(R.id.drawer_layout);
+        items = new ArrayList<>();
+        drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
         navDrawerView = (ViewGroup) activity.findViewById(R.id.nav_drawer);
 
-        if (navDrawerView == null || drawerLayout == null)
-            throw new RuntimeException("To use this class, you must have views with" +
-                    "the ids of drawer_layout and nav_drawer");
+        if (drawerLayout == null || navDrawerView == null)
+            throw new RuntimeException("To use this class, you must have views with the ids of drawer_layout and nav_drawer");
 
         Toolbar toolbar = activity.getToolbar();
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_action_navigation_menu);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +49,7 @@ public class NavDrawer {
         activity.getYoraApplication().getBus().unregister(this);
     }
 
-    public void addItem(NavDrawerItem item){
+    public void addItem(NavDrawerItem item) {
         items.add(item);
         item.navDrawer = this;
     }
@@ -66,14 +58,14 @@ public class NavDrawer {
         return drawerLayout.isDrawerOpen(Gravity.LEFT);
     }
 
-    public void setOpen(boolean isOpen){
+    public void setOpen(boolean isOpen) {
         if (isOpen)
             drawerLayout.openDrawer(Gravity.LEFT);
         else
             drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
-    public void setSelectedItem(NavDrawerItem item){
+    public void setSelectedItem(NavDrawerItem item) {
         if (selectedItem != null)
             selectedItem.setSelected(false);
 
@@ -92,7 +84,6 @@ public class NavDrawer {
         protected NavDrawer navDrawer;
 
         public abstract void inflate(LayoutInflater inflater, ViewGroup container);
-
         public abstract void setSelected(boolean isSelected);
     }
 
@@ -108,7 +99,7 @@ public class NavDrawer {
         private View view;
         private int defaultTextColor;
 
-        public BasicNavDrawerItem(String text, String badge, int iconDrawable, int containerId){
+        public BasicNavDrawerItem(String text, String badge, int iconDrawable, int containerId) {
             this.text = text;
             this.badge = badge;
             this.iconDrawable = iconDrawable;
@@ -116,10 +107,10 @@ public class NavDrawer {
         }
 
         @Override
-        public void inflate(LayoutInflater inflater, ViewGroup navDrawView) {
-            ViewGroup container = (ViewGroup) navDrawView.findViewById(containerId);
+        public void inflate(LayoutInflater inflater, ViewGroup navDrawerView) {
+            ViewGroup container = (ViewGroup) navDrawerView.findViewById(containerId);
             if (container == null)
-                throw new RuntimeException("NavDrawer item " + text + " could not be attached to ViewGroup. View not found");
+                throw new RuntimeException("Nav drawer item " + text + " could not be attached to ViewGroup. View not found.");
 
             view = inflater.inflate(R.layout.list_item_nav_drawer, container, false);
             container.addView(view);
@@ -138,7 +129,6 @@ public class NavDrawer {
                 badgeTextView.setText(badge);
             else
                 badgeTextView.setVisibility(View.GONE);
-
         }
 
         @Override
@@ -146,7 +136,6 @@ public class NavDrawer {
             if (isSelected) {
                 view.setBackgroundResource(R.drawable.list_item_nav_drawer_selected_item_background);
                 textView.setTextColor(navDrawer.activity.getResources().getColor(R.color.list_item_nav_drawer_selected_item_text_color));
-
             } else {
                 view.setBackground(null);
                 textView.setTextColor(defaultTextColor);
@@ -156,23 +145,24 @@ public class NavDrawer {
         public void setText(String text) {
             this.text = text;
 
-            if (view!= null)
+            if (view != null)
                 textView.setText(text);
         }
 
         public void setBadge(String badge) {
             this.badge = badge;
+
             if (view != null) {
                 if (badge != null)
                     badgeTextView.setVisibility(View.VISIBLE);
                 else
                     badgeTextView.setVisibility(View.GONE);
             }
-
         }
 
-        public void setIconDrawable(int iconDrawable) {
+        public void setIcon(int iconDrawable) {
             this.iconDrawable = iconDrawable;
+
             if (view != null) {
                 icon.setImageResource(iconDrawable);
             }
@@ -180,7 +170,7 @@ public class NavDrawer {
 
         @Override
         public void onClick(View v) {
-        navDrawer.setSelectedItem(this);
+            navDrawer.setSelectedItem(this);
         }
     }
 
@@ -193,8 +183,8 @@ public class NavDrawer {
         }
 
         @Override
-        public void inflate(LayoutInflater inflater, ViewGroup navDrawView) {
-            super.inflate(inflater, navDrawView);
+        public void inflate(LayoutInflater inflater, ViewGroup navDrawer) {
+            super.inflate(inflater, navDrawer);
 
             if (this.navDrawer.activity.getClass() == targetActivity) {
                 this.navDrawer.setSelectedItem(this);
@@ -202,17 +192,14 @@ public class NavDrawer {
         }
 
         @Override
-        public void onClick(View v) {
+        public void onClick(View view) {
             navDrawer.setOpen(false);
-
             final BaseActivity activity = navDrawer.activity;
 
-            if (activity.getClass() == targetActivity) {
+            if (activity.getClass() == targetActivity)
                 return;
-            }
 
-            super.onClick(v);
-
+            super.onClick(view);
 
             activity.fadeOut(new BaseActivity.FadeOutListener() {
                 @Override
@@ -221,7 +208,6 @@ public class NavDrawer {
                     activity.finish();
                 }
             });
-
         }
     }
 }

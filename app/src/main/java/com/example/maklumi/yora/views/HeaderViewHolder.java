@@ -6,9 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * Created by HomePC on 24/2/2016.
- */
 public class HeaderViewHolder extends RecyclerView.ViewHolder {
     private final TextView textView;
 
@@ -17,7 +14,7 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
         textView = (TextView) itemView.findViewById(android.R.id.text1);
     }
 
-    public void populate(String text){
+    public void populate(String text) {
         textView.setText(text);
     }
 }

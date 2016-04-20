@@ -7,19 +7,19 @@ import android.view.ViewGroup;
 
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.activities.BaseActivity;
+import com.example.maklumi.yora.activities.MainActivity;
 import com.example.maklumi.yora.services.entities.ContactRequest;
 import com.example.maklumi.yora.services.entities.Message;
+
+//import org.apache.http.Header;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by HomePC on 24/2/2016.
- */
-public class MainActivityAdapter  extends RecyclerView.Adapter {
+public class MainActivityAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE = 1;
-    private static final int VIEW_TYPE_CONTACT_REQUEST =2;
-    private static final int VIEW_TYPE_HEADER =3;
+    private static final int VIEW_TYPE_CONTACT_REQUEST = 2;
+    private static final int VIEW_TYPE_HEADER = 3;
 
     private List<Message> messages;
     private List<ContactRequest> contactRequests;
@@ -33,28 +33,30 @@ public class MainActivityAdapter  extends RecyclerView.Adapter {
         inflater = activity.getLayoutInflater();
         messages = new ArrayList<>();
         contactRequests = new ArrayList<>();
-
     }
 
     public List<Message> getMessages() {
         return messages;
     }
 
+    public List<ContactRequest> getContactRequests() {
+        return contactRequests;
+    }
 
-
+    @SuppressWarnings("UnusedAssignment")
     @Override
     public int getItemViewType(int position) {
         if (contactRequests.size() > 0) {
-            if (position == 0){
+            if (position == 0) {
                 return VIEW_TYPE_HEADER;
             }
 
             position--;
-            if (position < contactRequests.size()){
+            if (position < contactRequests.size()) {
                 return VIEW_TYPE_CONTACT_REQUEST;
             }
 
-            position += contactRequests.size();
+            position -= contactRequests.size();
         }
 
         if (messages.size() > 0) {
@@ -66,50 +68,36 @@ public class MainActivityAdapter  extends RecyclerView.Adapter {
             if (position < messages.size()) {
                 return VIEW_TYPE_MESSAGE;
             }
-            position -= contactRequests.size();
 
+            position -= contactRequests.size();
         }
 
-        throw new IllegalArgumentException("Item type position not knwon");
-
-    }
-
-
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public List<ContactRequest> getContactRequests() {
-        return contactRequests;
-    }
-
-    public void setContactRequests(List<ContactRequest> contactRequests) {
-        this.contactRequests = contactRequests;
+        throw new IllegalArgumentException(
+                "We are being asked for an item type from position " + position + ", though we have no such item");
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_MESSAGE) {
-            final MessageViewHolder viewHolder = new MessageViewHolder(inflater.inflate(R.layout.list_item_message, parent,false));
+            final MessageViewHolder viewHolder = new MessageViewHolder(inflater.inflate(R.layout.list_item_message, parent, false));
             viewHolder.getBackgroundView().setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    listener.onMessageClicked( (Message) v.getTag() );
+                public void onClick(View view) {
+                    listener.onMessageClicked((Message) view.getTag());
                 }
             });
             return viewHolder;
-        } else  if (viewType == VIEW_TYPE_CONTACT_REQUEST) {
+        } else if (viewType == VIEW_TYPE_CONTACT_REQUEST) {
             final ContactRequestViewHolder viewHolder = new ContactRequestViewHolder(inflater, parent);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     ContactRequest request = (ContactRequest) viewHolder.itemView.getTag();
                     listener.onContactRequestClicked(request, contactRequests.indexOf(request));
                 }
             });
             return viewHolder;
-        } else if (viewType == VIEW_TYPE_HEADER ) {
+        } else if (viewType == VIEW_TYPE_HEADER) {
             return new HeaderViewHolder(inflater, parent);
         }
 
@@ -124,8 +112,7 @@ public class MainActivityAdapter  extends RecyclerView.Adapter {
             ContactRequest request = contactRequests.get(position);
             holder.itemView.setTag(request);
             ((ContactRequestViewHolder) holder).populate(activity, request);
-
-        } else if (holder instanceof MessageViewHolder){
+        } else if (holder instanceof MessageViewHolder) {
             position--;
 
             if (contactRequests.size() > 0) {
@@ -136,8 +123,7 @@ public class MainActivityAdapter  extends RecyclerView.Adapter {
             MessageViewHolder viewHolder = (MessageViewHolder) holder;
             viewHolder.getBackgroundView().setTag(message);
             viewHolder.populate(activity, message);
-
-        }else  if (holder instanceof HeaderViewHolder) {
+        } else if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
             if (position == 0 && contactRequests.size() > 0) {
@@ -146,7 +132,7 @@ public class MainActivityAdapter  extends RecyclerView.Adapter {
                 viewHolder.populate("Received Messages");
             }
         } else {
-            throw new IllegalArgumentException("Can not populate holder " + holder.getClass().getName());
+            throw new IllegalArgumentException("Cannot populate holder of type " + holder.getClass().getName());
         }
     }
 

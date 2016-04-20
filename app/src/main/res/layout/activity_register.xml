@@ -1,72 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include
-        layout="@layout/include_login_head"/>
+        layout="@layout/include_login_header" />
 
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:gravity="center_vertical"
-            android:padding="16dp"
-                    >
+        android:padding="16dp">
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="User name"
-                android:singleLine="true"
-                android:layout_marginBottom="8dp"
-                android:id="@+id/activity_register_userName"
-                />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="User Name"
+            android:singleLine="true"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/activity_register_userName"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Email"
-                android:singleLine="true"
-                android:layout_marginBottom="8dp"
-                android:id="@+id/activity_register_email"
-                android:layout_below="@id/activity_register_userName"
-                android:inputType="textEmailAddress"
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:singleLine="true"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/activity_register_email"
+            android:layout_below="@id/activity_register_userName"
+            android:inputType="textEmailAddress"/>
 
-                />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:singleLine="true"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/activity_register_password"
+            android:inputType="textPassword"
+            android:layout_below="@id/activity_register_email"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:singleLine="true"
-                android:layout_marginBottom="8dp"
-                android:id="@+id/activity_register_password"
-                android:inputType="textPassword"
-                android:layout_below="@id/activity_register_email"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:background="@color/primary_color_dark"
+            android:textColor="#ffffff"
+            android:layout_below="@id/activity_register_password"
+            android:id="@+id/activity_register_registerButton"/>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Register"
-                android:background="@color/colorPrimaryDark"
-                android:textColor="@color/whito"
-                android:layout_below="@id/activity_register_password"
-                android:id="@+id/activity_register_registerButton"
-                />
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateOnly="true"
+            android:id="@+id/activity_register_progressBar"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/activity_register_registerButton"
+            android:layout_alignBottom="@id/activity_register_registerButton"
+            style="?android:attr/progressBarStyleInverse"/>
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminateOnly="true"
-                android:id="@+id/activity_register_progressBar"
-                android:layout_centerHorizontal="true"
-                android:layout_alignTop="@+id/activity_register_registerButton"
-                android:layout_alignBottom="@+id/activity_register_registerButton"
-                style="?android:attr/progressBarStyleInverse"/>
-        </RelativeLayout>
-
+    </RelativeLayout>
 
 </LinearLayout>

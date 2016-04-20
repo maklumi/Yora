@@ -1,6 +1,5 @@
 package com.example.maklumi.yora.views;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +12,12 @@ import com.example.maklumi.yora.activities.BaseActivity;
 import com.example.maklumi.yora.services.entities.UserDetails;
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by Maklumi on 22-02-16.
- */
 public class UserDetailsAdapter extends ArrayAdapter<UserDetails> {
     private LayoutInflater inflater;
 
     public UserDetailsAdapter(BaseActivity activity) {
         super(activity, 0);
-
         inflater = activity.getLayoutInflater();
-
     }
 
     @Override

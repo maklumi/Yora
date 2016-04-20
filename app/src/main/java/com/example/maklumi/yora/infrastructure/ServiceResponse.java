@@ -4,29 +4,32 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.TreeMap;
 
-/**
- * Created by HomePC on 19/2/2016.
- */
 public abstract class ServiceResponse {
     private static final String TAG = "ServiceResponse";
 
-    private String operationError; //wide scale
-    private HashMap <String, String> propertyErrors; //validation errors eg email format
-    private boolean isCritical; //eg not network connected
-    private TreeMap<String, String> propertyErrorCaseInsensitive;
+    @SerializedName("operationError")
+    private String operationError;
+
+    @SerializedName("propertyErrors")
+    private HashMap<String, String> propertyErrors;
+
+    private boolean isCritical;
+    private TreeMap<String, String> propertyErrorsCaaseInsensative;
 
     public ServiceResponse() {
         propertyErrors = new HashMap<>();
     }
 
-    public ServiceResponse(String operationError){
+    public ServiceResponse(String operationError) {
         this.operationError = operationError;
     }
 
-    public ServiceResponse(String operationError, boolean isCritical){
+    public ServiceResponse(String operationError, boolean isCritical) {
         this.operationError = operationError;
         this.isCritical = isCritical;
     }
@@ -39,19 +42,6 @@ public abstract class ServiceResponse {
         this.operationError = operationError;
     }
 
-    public String getPropertyErrors(String property) {
-
-        if (propertyErrorCaseInsensitive == null || propertyErrorCaseInsensitive.size() != propertyErrors.size()){
-            propertyErrorCaseInsensitive = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            propertyErrorCaseInsensitive.putAll(propertyErrors);
-        }
-        return propertyErrors.get(property);
-    }
-
-    public void setPropertyErrors(String property, String error) {
-        propertyErrors.put(property, error);
-    }
-
     public boolean isCritical() {
         return isCritical;
     }
@@ -60,13 +50,26 @@ public abstract class ServiceResponse {
         this.isCritical = isCritical;
     }
 
-    public void setIsCriticalError (String criticalError){
+    public void setCriticalError(String criticalError) {
         isCritical = true;
         operationError = criticalError;
     }
 
+    public void setPropertyError(String property, String error) {
+        propertyErrors.put(property, error);
+    }
+
+    public String getPropertyError(String property) {
+        if (propertyErrorsCaaseInsensative == null || propertyErrorsCaaseInsensative.size() != propertyErrors.size()) {
+            propertyErrorsCaaseInsensative = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            propertyErrorsCaaseInsensative.putAll(propertyErrors);
+        }
+
+        return propertyErrorsCaaseInsensative.get(property);
+    }
+
     public boolean didSucceed() {
-        return operationError == null || operationError.isEmpty() && propertyErrors.size() == 0;
+        return (operationError == null || operationError.isEmpty()) && (propertyErrors.size() == 0);
     }
 
     public void showErrorToast(Context context) {
@@ -76,7 +79,7 @@ public abstract class ServiceResponse {
         try {
             Toast.makeText(context, operationError, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
-            Log.e(TAG, "Can't create error toast");
+            Log.e(TAG, "Can't create error toast", e);
         }
     }
 }

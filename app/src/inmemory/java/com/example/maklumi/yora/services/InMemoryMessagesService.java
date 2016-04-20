@@ -7,11 +7,9 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Random;
 
-/**
- * Created by Maklumi on 23-02-16.
- */
 public class InMemoryMessagesService extends BaseInMemoryService {
     public InMemoryMessagesService(YoraApplication application) {
         super(application);
@@ -25,23 +23,26 @@ public class InMemoryMessagesService extends BaseInMemoryService {
     }
 
     @Subscribe
-    public void searchMessages(Messages.SearchMessagesRequest request){
+    public void searchMessages(Messages.SearchMessagesRequest request) {
         Messages.SearchMessagesResponse response = new Messages.SearchMessagesResponse();
         response.Messages = new ArrayList<>();
 
-        UserDetails [] users = new UserDetails[10];
-        for (int i = 0; i < users.length; i++)
-        {
+        UserDetails[] users = new UserDetails[10];
+        for (int i = 0; i < users.length; i++) {
             String stringId = Integer.toString(i);
-            users[i] = new UserDetails(i, true, "User " + stringId, "user " + stringId,
-                    "http://www.gravatar.com/avatar/"+ stringId + "?d=identicon");
+            users[i] = new UserDetails(
+                    i,
+                    true,
+                    "User " + stringId,
+                    "user_" + stringId,
+                    "http://www.gravatar.com/avatar/" + stringId + "?d=identicon");
         }
 
         Random random = new Random();
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DATE, -100);
 
-        for (int i=0; i < 100; i++){
+        for (int i = 0; i < 100; i++) {
             boolean isFromUs;
 
             if (request.IncludeReceivedMessages && request.IncludeSentMessages) {
@@ -56,40 +57,38 @@ public class InMemoryMessagesService extends BaseInMemoryService {
             response.Messages.add(new Message(
                     i,
                     (Calendar) date.clone(),
-                    "Short message " + numberString,
-                    "Long message " + numberString,
+                    "Short Message " + numberString,
+                    "Long Message " + numberString,
                     "",
                     users[random.nextInt(users.length)],
                     isFromUs,
-                    i>4
-            ));
+                    i > 4));
         }
 
         postDelayed(response, 2000);
     }
 
     @Subscribe
-    public void sendMessage(Messages.SendMessageRequest request){
-        Messages.SendMessageResponse res = new Messages.SendMessageResponse();
+    public void sendMessage(Messages.SendMessageRequest request) {
+        Messages.SendMessageResponse response = new Messages.SendMessageResponse();
 
         if (request.getMessage().equals("error")) {
-            res.setOperationError("Error sending message");
-
+            response.setOperationError("Something bad happened");
         } else if (request.getMessage().equals("error-message")) {
-            res.setPropertyErrors("message", "Invalid message");
+            response.setPropertyError("message", "Invalid message");
         }
 
-        postDelayed(res, 1500, 3000);
+        postDelayed(response, 1500, 3000);
     }
 
     @Subscribe
-    public void markMessageAsRead(Messages.MarkMessageAsReadRequest request){
+    public void markMessageAsRead(Messages.MarkMessageAsReadRequest request) {
         postDelayed(new Messages.MarkMessageAsReadResponse());
     }
 
     @Subscribe
-    public void getMessageDetails(Messages.GetMessageDetailRequest request){
-        Messages.GetMessageDetailResponse response = new Messages.GetMessageDetailResponse();
+    public void getMessageDetails(Messages.GetMessageDetailsRequest request) {
+        Messages.GetMessageDetailsResponse response = new Messages.GetMessageDetailsResponse();
         response.Message = new Message(
                 1,
                 Calendar.getInstance(),
@@ -98,10 +97,8 @@ public class InMemoryMessagesService extends BaseInMemoryService {
                 null,
                 new UserDetails(1, true, "Display Name", "Username", ""),
                 false,
-                false
-        );
+                false);
 
         postDelayed(response);
     }
-
 }

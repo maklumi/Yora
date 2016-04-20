@@ -2,6 +2,7 @@ package com.example.maklumi.yora.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -20,15 +21,13 @@ import com.example.maklumi.yora.services.entities.UserDetails;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by Maklumi on 24-02-16.
- */
 public class SendMessageActivity extends BaseAuthenticatedActivity implements View.OnClickListener {
     public static final String EXTRA_IMAGE_PATH = "EXTRA_IMAGE_PATH";
     public static final String EXTRA_CONTACT = "EXTRA_CONTACT";
     public static final String RESULT_MESSAGE = "RESULT_MESSAGE";
 
     public static final int MAX_IMAGE_HEIGHT = 1000;
+
     private static final String STATE_REQUEST = "STATE_REQUEST";
     private static final int REQUEST_SELECT_RECIPIENT = 1;
 
@@ -38,12 +37,12 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
     private View progressFrame;
 
     @Override
-    protected void onYoraCreate(Bundle savedInstance) {
+    protected void onYoraCreate(Bundle savedState) {
         setContentView(R.layout.activity_send_message);
         getSupportActionBar().setTitle("Send Message");
 
-        if (savedInstance != null) {
-            request = savedInstance.getParcelable(STATE_REQUEST);
+        if (savedState != null) {
+            request = savedState.getParcelable(STATE_REQUEST);
         }
 
         if (request == null) {
@@ -52,25 +51,25 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
         }
 
         Uri imageUri = getIntent().getParcelableExtra(EXTRA_IMAGE_PATH);
-        if (imageUri != null){
-            ImageView imageView = (ImageView) findViewById(R.id.activity_send_message_image);
+        if (imageUri != null) {
+            ImageView image = (ImageView) findViewById(R.id.activity_send_message_image);
+
             Picasso picasso = Picasso.with(this);
             picasso.invalidate(imageUri);
-            picasso.load(imageUri).into(imageView);
+            picasso.load(imageUri).into(image);
 
             request.setImagePath(imageUri);
         }
 
         if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-            View optionsFrame = findViewById(R.id.activity_send_message_optionFrame);
+            View optionsFrame = findViewById(R.id.activity_send_message_optionsFrame);
 
             RelativeLayout.LayoutParams params =
                     (RelativeLayout.LayoutParams) optionsFrame.getLayoutParams();
 
-            params.addRule(RelativeLayout.ALIGN_END);
+            params.addRule(RelativeLayout.ALIGN_PARENT_END);
             params.addRule(RelativeLayout.BELOW, R.id.include_toolbar);
-            params.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    100, getResources().getDisplayMetrics());
+            params.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
             optionsFrame.setLayoutParams(params);
         }
 
@@ -81,7 +80,7 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
         progressFrame.setVisibility(View.GONE);
 
         recipientButton.setOnClickListener(this);
-        updateButton();
+        updateButtons();
     }
 
     @Override
@@ -90,15 +89,15 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
     }
 
     @Override
-    public void onClick(View v) {
-        if (v == recipientButton){
+    public void onClick(View view) {
+        if (view == recipientButton) {
             selectRecipient();
         }
     }
 
-    private void updateButton() {
+    private void updateButtons() {
         UserDetails recipient = request.getRecipient();
-        if (recipient != null){
+        if (recipient != null) {
             recipientButton.setText("To: " + recipient.getDisplayName());
         } else {
             recipientButton.setText("Choose Recipient");
@@ -106,15 +105,15 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
     }
 
     private void selectRecipient() {
-        startActivityForResult(new Intent(this, SelectContactActivity.class), REQUEST_SELECT_RECIPIENT );
+        startActivityForResult(new Intent(this, SelectContactActivity.class), REQUEST_SELECT_RECIPIENT);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SELECT_RECIPIENT && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_SELECT_RECIPIENT && resultCode == RESULT_OK) {
             UserDetails selectedContact = data.getParcelableExtra(SelectContactActivity.RESULT_CONTACT);
             request.setRecipient(selectedContact);
-            updateButton();
+            updateButtons();
         }
     }
 
@@ -127,17 +126,17 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.activity_send_message_menuSend){
+        if (id == R.id.activity_send_message_menuSend) {
             sendMessage();
             return true;
         }
-        return false;
 
+        return false;
     }
 
     private void sendMessage() {
         String message = messageEditText.getText().toString();
-        if (message.length() < 2 ) {
+        if (message.length() < 2) {
             messageEditText.setError("Please enter a longer message");
             return;
         }
@@ -159,23 +158,28 @@ public class SendMessageActivity extends BaseAuthenticatedActivity implements Vi
     }
 
     @Subscribe
-    public void onMessageSent (Messages.SendMessageResponse response){
+    public void onMessageSent(Messages.SendMessageResponse response) {
         if (!response.didSucceed()) {
             response.showErrorToast(this);
-            messageEditText.setError(response.getPropertyErrors("message"));
-            progressFrame.animate().alpha(0).setDuration(360).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    progressFrame.setVisibility(View.GONE);
-                }
-            })
+            messageEditText.setError(response.getPropertyError("message"));
+            progressFrame
+                    .animate()
+                    .alpha(0)
+                    .setDuration(200)
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressFrame.setVisibility(View.GONE);
+                        }
+                    })
                     .start();
             return;
         }
 
-        Intent intent = new Intent();
-        intent.putExtra(RESULT_MESSAGE, response.Message);
-        setResult(RESULT_OK, intent);
+        Intent data = new Intent();
+        data.putExtra(RESULT_MESSAGE, response.Message);
+
+        setResult(RESULT_OK, data);
         finish();
     }
 }

@@ -3,6 +3,7 @@ package com.example.maklumi.yora.services;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ListView;
 
 import com.example.maklumi.yora.infrastructure.ServiceResponse;
 import com.example.maklumi.yora.services.entities.Message;
@@ -10,18 +11,14 @@ import com.example.maklumi.yora.services.entities.UserDetails;
 
 import java.util.List;
 
-/**
- * Created by Maklumi on 23-02-16.
- */
 public final class Messages {
     private Messages() {
-
     }
 
     public static class DeleteMessageRequest {
-        public  int MessageId;
+        public int MessageId;
 
-        public DeleteMessageRequest(int messageId){
+        public DeleteMessageRequest(int messageId) {
             MessageId = messageId;
         }
     }
@@ -41,26 +38,23 @@ public final class Messages {
             IncludeReceivedMessages = includeReceivedMessages;
         }
 
-        public SearchMessagesRequest( boolean includeSentMessages, boolean includeReceivedMessages) {
+        public SearchMessagesRequest(boolean includeSentMessages, boolean includeReceivedMessages) {
             FromContactId = -1;
             IncludeSentMessages = includeSentMessages;
             IncludeReceivedMessages = includeReceivedMessages;
         }
-
     }
 
-    public static class SearchMessagesResponse extends ServiceResponse{
+    public static class SearchMessagesResponse extends ServiceResponse {
         public List<Message> Messages;
     }
 
     public static class SendMessageRequest implements Parcelable {
-
         private UserDetails recipient;
         private Uri imagePath;
         private String message;
 
         public SendMessageRequest() {
-
         }
 
         private SendMessageRequest(Parcel in) {
@@ -69,29 +63,16 @@ public final class Messages {
             message = in.readString();
         }
 
-        public static Creator<SendMessageRequest> CREATOR = new Creator<SendMessageRequest>() {
-            @Override
-            public SendMessageRequest createFromParcel(Parcel source) {
-                return new SendMessageRequest(source);
-            }
-
-            @Override
-            public SendMessageRequest[] newArray(int size) {
-                return new SendMessageRequest[size];
-            }
-        };
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeParcelable(recipient, 0);
+            out.writeParcelable(imagePath, 0);
+            out.writeString(message);
+        }
 
         @Override
         public int describeContents() {
             return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-
-            dest.writeParcelable(recipient, 0);
-            dest.writeParcelable(imagePath, 0);
-            dest.writeString(message);
         }
 
         public UserDetails getRecipient() {
@@ -117,31 +98,44 @@ public final class Messages {
         public void setMessage(String message) {
             this.message = message;
         }
+
+        public static Creator<SendMessageRequest> CREATOR = new Creator<SendMessageRequest>() {
+            @Override
+            public SendMessageRequest createFromParcel(Parcel source) {
+                return new SendMessageRequest(source);
+            }
+
+            @Override
+            public SendMessageRequest[] newArray(int size) {
+                return new SendMessageRequest[size];
+            }
+        };
     }
 
     public static class SendMessageResponse extends ServiceResponse {
-        public String Message;
+        public Message Message;
     }
 
     public static class MarkMessageAsReadRequest {
         public int MessageId;
 
-        public MarkMessageAsReadRequest(int messageId){
+        public MarkMessageAsReadRequest(int messageId) {
             MessageId = messageId;
         }
     }
 
-    public static class MarkMessageAsReadResponse extends ServiceResponse {}
+    public static class MarkMessageAsReadResponse extends ServiceResponse {
+    }
 
-    public static class GetMessageDetailRequest {
-        public int id;
+    public static class GetMessageDetailsRequest {
+        public int Id;
 
-        public GetMessageDetailRequest(int id) {
-            this.id = id;
+        public GetMessageDetailsRequest(int id) {
+            Id = id;
         }
     }
 
-    public static class GetMessageDetailResponse extends ServiceResponse {
+    public static class GetMessageDetailsResponse extends ServiceResponse {
         public Message Message;
     }
 }

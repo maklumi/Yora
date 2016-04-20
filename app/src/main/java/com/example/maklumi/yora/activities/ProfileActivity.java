@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.dialogs.ChangePasswordDialog;
@@ -32,94 +31,91 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * Created by Maklumi on 17-02-16.
- */
 public class ProfileActivity extends BaseAuthenticatedActivity implements View.OnClickListener {
-
     private static final int REQUEST_SELECT_IMAGE = 100;
 
-    private ImageView avatarView;
-    private View avatarProgressFrame;
-    private File tempOutputFile;
+    private static final int STATE_VIEWING = 1;
+    private static final int STATE_EDITING = 2;
 
-    private static final int STATE_VIEWING=1;
-    private static final int STATE_EDITING=2;
-    
     private static final String BUNDLE_STATE = "BUNDLE_STATE";
 
     private static boolean isProgressBarVisible;
-    
+
     private int currentState;
     private EditText displayNameText;
     private EditText emailText;
     private View changeAvatarButton;
     private ActionMode editProfileActionMode;
-
+    private ImageView avatarView;
+    private View avatarProgressFrame;
+    private File tempOutputFile;
     private Dialog progressDialog;
-    
+
     @Override
-    protected void onYoraCreate(Bundle savedInstance) {
+    protected void onYoraCreate(Bundle savedState) {
         setContentView(R.layout.activity_profile);
         setNavDrawer(new MainNavDrawer(this));
 
         if (!isTablet) {
-            View textFields = findViewById(R.id.activity_profile_textfields);
+            View textFields = findViewById(R.id.activity_profile_textFields);
 
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) textFields.getLayoutParams();
-            params.setMargins(0, params.getMarginStart(), 0,0);
+            params.setMargins(0, params.getMarginStart(), 0, 0);
             params.removeRule(RelativeLayout.END_OF);
-            params.addRule(RelativeLayout.BELOW, R.id.activity_profile_change_avatar);
+            params.addRule(RelativeLayout.BELOW, R.id.activity_profile_changeAvatar);
             textFields.setLayoutParams(params);
         }
 
         avatarView = (ImageView) findViewById(R.id.activity_profile_avatar);
         avatarProgressFrame = findViewById(R.id.activity_profile_avatarProgressFrame);
-        changeAvatarButton = findViewById(R.id.activity_profile_change_avatar);
+        changeAvatarButton = findViewById(R.id.activity_profile_changeAvatar);
         displayNameText = (EditText) findViewById(R.id.activity_profile_displayName);
-        emailText = (EditText) findViewById(R.id.activity_profile_email); 
+        emailText = (EditText) findViewById(R.id.activity_profile_email);
         tempOutputFile = new File(getExternalCacheDir(), "temp-image.jpg");
 
         avatarView.setOnClickListener(this);
         changeAvatarButton.setOnClickListener(this);
-
         avatarProgressFrame.setVisibility(View.GONE);
-        
+
         User user = application.getAuth().getUser();
         getSupportActionBar().setTitle(user.getDisplayName());
-        Picasso
-                .with(this)
-                .load(user.getAvatarUrl())
-                .into(avatarView);
+        Picasso.with(this).load(user.getAvatarUrl()).into(avatarView);
 
-        if (savedInstance == null) { // cover for rotation of screen
+        if (savedState == null) {
             displayNameText.setText(user.getDisplayName());
             emailText.setText(user.getEmail());
-
             changeState(STATE_VIEWING);
-        } else {
-            changeState(savedInstance.getInt(BUNDLE_STATE));
-        }
+        } else
+            changeState(savedState.getInt(BUNDLE_STATE));
 
         if (isProgressBarVisible)
             setProgressBarVisible(true);
     }
 
-    @Override
-    public void onClick(View v) {
-        int viewId = v.getId();
+    @Subscribe
+    public void onUserDetailsUpdated(Account.UserDetailsUpdatedEvent event) {
+        getSupportActionBar().setTitle(event.User.getDisplayName());
+        Picasso.with(this).load(event.User.getAvatarUrl()).into(avatarView);
+    }
 
-        if (viewId == R.id.activity_profile_change_avatar || viewId == R.id.activity_profile_avatar)
+    @Override
+    public void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+        savedState.putInt(BUNDLE_STATE, currentState);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int viewId = view.getId();
+
+        if (viewId == R.id.activity_profile_changeAvatar || viewId == R.id.activity_profile_avatar)
             changeAvatar();
-      //  Crop.pickImage(this);
-        return;
     }
 
     private void changeAvatar() {
         List<Intent> otherImageCaptureIntents = new ArrayList<>();
-        List<ResolveInfo> otherImageCaptureActivities = getPackageManager().queryIntentActivities(
-                new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
+        List<ResolveInfo> otherImageCaptureActivities = getPackageManager()
+                .queryIntentActivities(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
 
         for (ResolveInfo info : otherImageCaptureActivities) {
             Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -132,64 +128,55 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         selectImageIntent.setType("image/*");
 
         Intent chooser = Intent.createChooser(selectImageIntent, "Chooser Avatar");
-        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, otherImageCaptureIntents.toArray(
-                new Parcelable[otherImageCaptureActivities.size()]));
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, otherImageCaptureIntents.toArray(new Parcelable[otherImageCaptureActivities.size()]));
 
         startActivityForResult(chooser, REQUEST_SELECT_IMAGE);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             tempOutputFile.delete();
             return;
         }
+
         if (requestCode == REQUEST_SELECT_IMAGE) {
             Uri outputFile;
             Uri tempFileUri = Uri.fromFile(tempOutputFile);
 
-            if (data != null && ( data.getAction() == null || !data.getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)))
+            if (data != null && (data.getAction() == null || !data.getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)))
                 outputFile = data.getData();
             else
                 outputFile = tempFileUri;
 
-            // my change from original code on new crop
-            Crop.of(outputFile, tempFileUri).asSquare().start(this);
-
+            Crop.of(tempFileUri, outputFile)
+                    .asSquare()
+                    .start(this);
         } else if (requestCode == Crop.REQUEST_CROP) {
-
             avatarProgressFrame.setVisibility(View.VISIBLE);
             bus.post(new Account.ChangeAvatarRequest(Uri.fromFile(tempOutputFile)));
-            avatarView.setImageURI(Uri.fromFile(tempOutputFile));
         }
-
     }
 
     @Subscribe
-    public void onAvatarUpdated(Account.ChangeAvatarResponse response){
+    public void onAvatarUpdated(Account.ChangeAvatarResponse response) {
         avatarProgressFrame.setVisibility(View.GONE);
 
         if (!response.didSucceed())
             response.showErrorToast(this);
-
-        avatarProgressFrame.setVisibility(View.GONE);
     }
 
-
     @Subscribe
-    public void onProfileUpdated(Account.UpdateProfileResponse response){
-        if (!response.didSucceed()){
+    public void onProfileUpdated(Account.UpdateProfileResponse response) {
+        if (!response.didSucceed()) {
             response.showErrorToast(this);
             changeState(STATE_EDITING);
         }
 
-            displayNameText.setError(response.getPropertyErrors("displayName"));
-            emailText.setError(response.getPropertyErrors("email"));
-            setProgressBarVisible(false);
-
+        displayNameText.setError(response.getPropertyError("displayName"));
+        emailText.setError(response.getPropertyError("email"));
+        setProgressBarVisible(false);
     }
-
 
     private void setProgressBarVisible(boolean visible) {
         if (visible) {
@@ -205,16 +192,8 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         isProgressBarVisible = visible;
     }
 
-    @Subscribe
-    public void onUserDetailsUpdated(Account.UserDetailsUpdatedEvent event){
-        getSupportActionBar().setTitle(event.User.getDisplayName());
-        Picasso.with(this).load(event.User.getAvatarUrl()).into(avatarView);
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         getMenuInflater().inflate(R.menu.activity_profile, menu);
         return true;
     }
@@ -222,8 +201,8 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        
-        if (itemId == R.id.activity_profile_menuEdit){
+
+        if (itemId == R.id.activity_profile_menuEdit) {
             changeState(STATE_EDITING);
             return true;
         } else if (itemId == R.id.activity_profile_menuChangePassword) {
@@ -235,13 +214,14 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             dialog.show(transaction, null);
             return true;
         }
+
         return false;
     }
 
     private void changeState(int state) {
-        if (state == currentState) {
+        if (state == currentState)
             return;
-        }
+
         currentState = state;
 
         if (state == STATE_VIEWING) {
@@ -249,21 +229,18 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
             emailText.setEnabled(false);
             changeAvatarButton.setVisibility(View.VISIBLE);
 
-            if (editProfileActionMode != null){
+            if (editProfileActionMode != null) {
                 editProfileActionMode.finish();
                 editProfileActionMode = null;
             }
-
         } else if (state == STATE_EDITING) {
             displayNameText.setEnabled(true);
             emailText.setEnabled(true);
             changeAvatarButton.setVisibility(View.GONE);
 
-            editProfileActionMode = toolbar.startActionMode( new EditProfileActionCallback());
-
-
+            editProfileActionMode = toolbar.startActionMode(new EditProfileActionCallback());
         } else
-            throw new IllegalArgumentException("Invalid state : " + state);
+            throw new IllegalArgumentException("Invalid state: " + state);
     }
 
     private class EditProfileActionCallback implements ActionMode.Callback {
@@ -282,19 +259,16 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             int itemId = item.getItemId();
 
-            if (itemId == R.id.activity_profile_edit_menuDone){
-
+            if (itemId == R.id.activity_profile_edit_menuDone) {
                 setProgressBarVisible(true);
                 changeState(STATE_VIEWING);
-                bus.post(new Account.UpdateProfileRequest(displayNameText.getText().toString(),
+                bus.post(new Account.UpdateProfileRequest(
+                        displayNameText.getText().toString(),
                         emailText.getText().toString()));
-
-
                 return true;
             }
 
             return false;
-
         }
 
         @Override
@@ -303,11 +277,4 @@ public class ProfileActivity extends BaseAuthenticatedActivity implements View.O
                 changeState(STATE_VIEWING);
         }
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(BUNDLE_STATE, currentState);
-    }
-
 }

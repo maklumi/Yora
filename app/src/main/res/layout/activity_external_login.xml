@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/activity_externnal_login_webView"></WebView>
+        android:id="@+id/activity_external_login_webView" />
 
-    <Button
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Test Login"
-        android:layout_gravity="bottom"
-        android:id="@+id/activity_external_login_testButton"/>
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:id="@+id/activity_external_login_progressFrame"
+        android:background="#2196F3"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateOnly="true"/>
+    </FrameLayout>
 
 </FrameLayout>

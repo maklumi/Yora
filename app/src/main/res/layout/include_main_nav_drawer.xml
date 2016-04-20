@@ -5,54 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="300dp"
-    android:layout_gravity="start"
     android:id="@+id/nav_drawer"
+    android:layout_gravity="start"
     android:background="#fff">
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#0d47a1">
+        android:background="#0D47A1">
 
         <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_margin="16dp"
-            android:id="@+id/include_man_nav_drawer_avatar"
-            android:src="@drawable/ic_contacts_black_24dp"/>
+            android:id="@+id/include_main_nav_drawer_avatar"
+            android:src="@drawable/ic_action_unread"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/include_man_nav_drawer_avatar"
-            android:layout_alignTop="@id/include_man_nav_drawer_avatar"
-            android:id="@+id/include_man_nav_drawer_displayName"
-            android:text="Harun Di"
-            android:textColor="@color/whito"
-            />
+            android:layout_toEndOf="@id/include_main_nav_drawer_avatar"
+            android:layout_alignTop="@id/include_main_nav_drawer_avatar"
+            android:id="@+id/include_main_nav_drawer_displayName"
+            android:text="Nelson LaQuet"
+            android:textColor="#8affffff"/>
     </RelativeLayout>
-
+    
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:id="@+id/include_man_nav_drawer_topItem"
-            >
-
-        </LinearLayout>
-
+            android:id="@+id/include_main_nav_drawer_topItems"/>
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/include_man_nav_drawer_bottomItem"
-        android:background="#e3f2d6"
-        ></LinearLayout>
+        android:id="@+id/include_main_nav_drawer_bottomItems"
+        android:background="#E3F2FD"/>
+
 </LinearLayout>

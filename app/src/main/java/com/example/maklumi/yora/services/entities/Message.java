@@ -3,13 +3,12 @@ package com.example.maklumi.yora.services.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.maklumi.yora.infrastructure.User;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-/**
- * Created by Maklumi on 23-02-16.
- */
-public class Message implements Parcelable{
+public class Message implements Parcelable {
     private int id;
     private Calendar createdAt;
     private String shortMessage;
@@ -20,9 +19,15 @@ public class Message implements Parcelable{
     private boolean isRead;
     private boolean isSelected;
 
-    public Message(int id, Calendar createdAt, String shortMessage, String longMessage,
-                   String imageUrl, UserDetails otherUser,
-                   boolean isFromUs, boolean isRead) {
+    public Message(
+            int id,
+            Calendar createdAt,
+            String shortMessage,
+            String longMessage,
+            String imageUrl,
+            UserDetails otherUser,
+            boolean isFromUs,
+            boolean isRead) {
         this.id = id;
         this.createdAt = createdAt;
         this.shortMessage = shortMessage;
@@ -33,7 +38,7 @@ public class Message implements Parcelable{
         this.isRead = isRead;
     }
 
-    private Message(Parcel in){
+    private Message(Parcel in) {
         id = in.readInt();
         createdAt = new GregorianCalendar();
         createdAt.setTimeInMillis(in.readLong());
@@ -46,15 +51,20 @@ public class Message implements Parcelable{
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeLong(createdAt.getTimeInMillis());
-        dest.writeString(shortMessage);
-        dest.writeString(longMessage);
-        dest.writeString(imageUrl);
-        dest.writeParcelable(otherUser, 0);
-        dest.writeByte((byte) (isFromUs ? 1:0));
-        dest.writeByte((byte) (isRead ? 1:0));
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(id);
+        out.writeLong(createdAt.getTimeInMillis());
+        out.writeString(shortMessage);
+        out.writeString(longMessage);
+        out.writeString(imageUrl);
+        out.writeParcelable(otherUser, 0);
+        out.writeByte((byte)(isFromUs ? 1 : 0));
+        out.writeByte((byte)(isRead ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public int getId() {
@@ -89,23 +99,16 @@ public class Message implements Parcelable{
         return isRead;
     }
 
-    public void setIsRead(boolean isRead){
+    public void setIsRead(boolean isRead) {
         this.isRead = isRead;
     }
-
 
     public boolean isSelected() {
         return isSelected;
     }
 
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     public static final Creator<Message> CREATOR = new Creator<Message>() {
@@ -116,7 +119,7 @@ public class Message implements Parcelable{
 
         @Override
         public Message[] newArray(int size) {
-            return new Message[0];
+            return new Message[size];
         }
     };
 }

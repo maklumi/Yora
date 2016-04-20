@@ -1,11 +1,11 @@
 package com.example.maklumi.yora.activities;
+
 import android.animation.Animator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -16,11 +16,8 @@ import com.example.maklumi.yora.infrastructure.YoraApplication;
 import com.example.maklumi.yora.views.NavDrawer;
 import com.squareup.otto.Bus;
 
-/**
- * Created by Maklumi on 15-02-16.
- */
-public abstract class BaseActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
-    private boolean isRegisteredWithBus;
+public abstract class BaseActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+    private boolean isRegisterWithBus;
 
     protected YoraApplication application;
     protected Toolbar toolbar;
@@ -28,12 +25,11 @@ public abstract class BaseActivity extends ActionBarActivity implements SwipeRef
     protected boolean isTablet;
     protected Bus bus;
     protected ActionScheduler scheduler;
-    protected SwipeRefreshLayout swipeRefreshLayout;
+    protected SwipeRefreshLayout swipeRefresh;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
         application = (YoraApplication) getApplication();
         bus = application.getBus();
         scheduler = new ActionScheduler(application);
@@ -42,8 +38,7 @@ public abstract class BaseActivity extends ActionBarActivity implements SwipeRef
         isTablet = (metrics.widthPixels / metrics.density) >= 600;
 
         bus.register(this);
-
-        isRegisteredWithBus = true;
+        isRegisterWithBus = true;
     }
 
     public ActionScheduler getScheduler() {
@@ -66,75 +61,52 @@ public abstract class BaseActivity extends ActionBarActivity implements SwipeRef
     protected void onDestroy() {
         super.onDestroy();
 
-        if (isRegisteredWithBus) {
-
+        if (isRegisterWithBus) {
             bus.unregister(this);
-            isRegisteredWithBus = false;
+            isRegisterWithBus = false;
         }
-        if (navDrawer != null) navDrawer.destroy();
+
+        if (navDrawer != null)
+            navDrawer.destroy();
     }
 
     @Override
     public void finish() {
         super.finish();
 
-        if (isRegisteredWithBus){
+        if (isRegisterWithBus) {
             bus.unregister(this);
-            isRegisteredWithBus = false;
+            isRegisterWithBus = false;
         }
     }
 
     @Override
-    public void setContentView(@LayoutRes int layoutResID) {
-        super.setContentView(layoutResID);
+    public void setContentView(@LayoutRes int layoutResId) {
+        super.setContentView(layoutResId);
 
-        toolbar = (Toolbar)findViewById(R.id.include_toolbar);
-        if (toolbar!= null) {
+        toolbar = (Toolbar) findViewById(R.id.include_toolbar);
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setOnRefreshListener(this);
-            swipeRefreshLayout.setColorSchemeColors(
-                    Color.parseColor("#ff0000ff"),
-                    Color.parseColor("#ff99cc00"),
-                    Color.parseColor("#ffff0022"),
-                    Color.parseColor("#ffff4444")
-            );
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        if (swipeRefresh != null) {
+            swipeRefresh.setOnRefreshListener(this);
+            swipeRefresh.setColorSchemeColors(
+                    Color.parseColor("#FF00DDFF"),
+                    Color.parseColor("#FF99CC00"),
+                    Color.parseColor("#FFFFBB33"),
+                    Color.parseColor("#FFFF4444"));
         }
-
     }
 
-    protected void setNavDrawer(NavDrawer drawer){
-        this.navDrawer = drawer;
-        this.navDrawer.create();
-
-        //disable native animation
-        overridePendingTransition(0,0); //(enteranim, exitanim)
-
-        View rootView = findViewById(android.R.id.content);
-        rootView.setAlpha(0); //completely transparent, zero opaque
-        rootView.animate().alpha(1).setDuration(150).start();
-    }
-
-    public Toolbar getToolbar(){
-        return  toolbar;
-    }
-
-    public YoraApplication getYoraApplication() {
-        return application;
-    }
-
-    //animation
-    public void fadeOut(final FadeOutListener listener  ){
+    public void fadeOut(final FadeOutListener listener) {
         View rootView = findViewById(android.R.id.content);
         rootView.animate()
                 .alpha(0)
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-
                     }
 
                     @Override
@@ -144,28 +116,40 @@ public abstract class BaseActivity extends ActionBarActivity implements SwipeRef
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-
                     }
 
                     @Override
                     public void onAnimationRepeat(Animator animation) {
-
                     }
                 })
                 .setDuration(300)
                 .start();
+    }
 
+    protected void setNavDrawer(NavDrawer drawer) {
+        this.navDrawer = drawer;
+        this.navDrawer.create();
+
+        overridePendingTransition(0, 0);
+
+        View rootView = findViewById(android.R.id.content);
+        rootView.setAlpha(0);
+        rootView.animate().alpha(1).setDuration(450).start();
+    }
+
+    public Toolbar getToolbar() {
+        return toolbar;
+    }
+
+    public YoraApplication getYoraApplication() {
+        return application;
     }
 
     @Override
     public void onRefresh() {
-
     }
 
-    //interface
     public interface FadeOutListener {
         void onFadeOutEnd();
     }
-
-
 }

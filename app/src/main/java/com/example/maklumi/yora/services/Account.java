@@ -5,11 +5,8 @@ import android.net.Uri;
 import com.example.maklumi.yora.infrastructure.ServiceResponse;
 import com.example.maklumi.yora.infrastructure.User;
 
-/**
- * Created by HomePC on 19/2/2016.
- */
 public final class Account {
-    private Account(){
+    private Account() {
     }
 
     public static class UserResponse extends ServiceResponse {
@@ -24,7 +21,6 @@ public final class Account {
 
     public static class LoginWithUsernameRequest {
         public String Username;
-
         public String Password;
 
         public LoginWithUsernameRequest(String username, String password) {
@@ -34,7 +30,6 @@ public final class Account {
     }
 
     public static class LoginWithUsernameResponse extends ServiceResponse {
-
     }
 
     public static class LoginWithLocalTokenRequest {
@@ -45,8 +40,7 @@ public final class Account {
         }
     }
 
-    public static class LoginWIthLocalTokenResponse extends UserResponse {
-
+    public static class LoginWithLocalTokenResponse extends UserResponse {
     }
 
     public static class LoginWithExternalTokenRequest {
@@ -62,36 +56,34 @@ public final class Account {
     }
 
     public static class LoginWithExternalTokenResponse extends UserResponse {
-
     }
 
     public static class RegisterRequest {
-        public String Username;
-        public String Password;
+        public String UserName;
         public String Email;
+        public String Password;
         public String ClientId;
 
-        public RegisterRequest(String username, String password, String email) {
-            Username = username;
-            Password = password;
+        public RegisterRequest(String userName, String email, String password) {
+            UserName = userName;
             Email = email;
+            Password = password;
             ClientId = "android";
         }
     }
 
     public static class RegisterResponse extends UserResponse {
-
     }
 
     public static class RegisterWithExternalTokenRequest {
-        public String Username;
+        public String UserName;
         public String Email;
         public String Provider;
         public String Token;
         public String ClientId;
 
-        public RegisterWithExternalTokenRequest(String username, String email, String provider, String token) {
-            Username = username;
+        public RegisterWithExternalTokenRequest(String userName, String email, String provider, String token) {
+            UserName = userName;
             Email = email;
             Provider = provider;
             Token = token;
@@ -100,16 +92,13 @@ public final class Account {
     }
 
     public static class RegisterWithExternalTokenResponse extends UserResponse {
-
     }
 
-
-
     public static class ChangeAvatarRequest {
-        public Uri newAvatarUri;
+        public Uri NewAvatarUri;
 
-        public ChangeAvatarRequest(Uri newAvatarUri){
-            this.newAvatarUri = newAvatarUri;
+        public ChangeAvatarRequest(Uri newAvatarUri) {
+            NewAvatarUri = newAvatarUri;
         }
     }
 
@@ -118,29 +107,29 @@ public final class Account {
     }
 
     public static class UpdateProfileRequest {
-        public String displayName;
-        public String email;
+        public String DisplayName;
+        public String Email;
 
         public UpdateProfileRequest(String displayName, String email) {
-            this.displayName = displayName;
-            this.email = email;
+            DisplayName = displayName;
+            Email = email;
         }
     }
 
     public static class UpdateProfileResponse extends ServiceResponse {
         public String DisplayName;
-        public String email;
+        public String Email;
     }
 
     public static class ChangePasswordRequest {
-        public String currentPassword;
-        public String newPassword;
-        public String confirmNewPassword;
+        public String CurrentPassword;
+        public String NewPassword;
+        public String ConfirmNewPassword;
 
         public ChangePasswordRequest(String currentPassword, String newPassword, String confirmNewPassword) {
-            this.currentPassword = currentPassword;
-            this.newPassword = newPassword;
-            this.confirmNewPassword = confirmNewPassword;
+            CurrentPassword = currentPassword;
+            NewPassword = newPassword;
+            this.ConfirmNewPassword = confirmNewPassword;
         }
     }
 
@@ -150,7 +139,7 @@ public final class Account {
     public static class UserDetailsUpdatedEvent {
         public User User;
 
-        public UserDetailsUpdatedEvent(User user) {
+        public UserDetailsUpdatedEvent(com.example.maklumi.yora.infrastructure.User user) {
             User = user;
         }
     }
@@ -158,14 +147,11 @@ public final class Account {
     public static class UpdateGcmRegistrationRequest {
         public String RegistrationId;
 
-        public UpdateGcmRegistrationRequest(String registrationId){
+        public UpdateGcmRegistrationRequest(String registrationId) {
             RegistrationId = registrationId;
         }
-
     }
 
     public static class UpdateGcmRegistrationResponse extends ServiceResponse {
-
     }
-
 }

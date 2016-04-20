@@ -7,15 +7,11 @@ import com.squareup.otto.Bus;
 
 import java.util.Random;
 
-/**
- * Created by Maklumi on 20-02-16.
- */
 public abstract class BaseInMemoryService {
     protected final Bus bus;
     protected final YoraApplication application;
     protected final Handler handler;
     protected final Random random;
-
 
     protected BaseInMemoryService(YoraApplication application) {
         this.application = application;
@@ -25,29 +21,28 @@ public abstract class BaseInMemoryService {
         bus.register(this);
     }
 
-    protected void invokeDelayed(Runnable runnable, long milisecondMin, long milisecondMax){
-        if (milisecondMin > milisecondMax)
-            throw new IllegalArgumentException("Minimum must be smaller than maximum");
+    protected void invokeDelayed(Runnable runnable, long millisecondMin, long millisecondMax) {
+        if (millisecondMin > millisecondMax)
+            throw new IllegalArgumentException("Min must be smaller than max");
 
-        long delay = (long) ((milisecondMax-milisecondMin) * random.nextDouble()) + milisecondMin;
+        long delay = (long)(random.nextDouble() * (millisecondMax - millisecondMin)) + millisecondMin;
         handler.postDelayed(runnable, delay);
     }
 
-    protected void postDelayed(final Object event, long milisecondMin, long milisecondMax){
+    protected void postDelayed(final Object event, long millisecondMin, long millisecondMax) {
         invokeDelayed(new Runnable() {
             @Override
             public void run() {
                 bus.post(event);
             }
-        }, milisecondMin, milisecondMax);
+        }, millisecondMin, millisecondMax);
     }
 
-    protected void postDelayed(Object event, long miliseconds){
-        postDelayed(event, miliseconds, miliseconds);
+    protected void postDelayed(Object event, long milliseconds) {
+        postDelayed(event, milliseconds, milliseconds);
     }
 
     protected void postDelayed(Object event) {
-        postDelayed(event, 600,1200);
+        postDelayed(event, 600, 1200);
     }
-
 }

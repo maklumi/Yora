@@ -11,11 +11,8 @@ import com.example.maklumi.yora.services.entities.Message;
 
 import java.util.ArrayList;
 
-/**
- * Created by Maklumi on 23-02-16.
- */
 public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> implements View.OnClickListener {
-    private final LayoutInflater inflater;
+    private final LayoutInflater layoutInflater;
     private final BaseActivity activity;
     private final OnMessageClickedListener listener;
     private final ArrayList<Message> messages;
@@ -23,8 +20,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> imp
     public MessagesAdapter(BaseActivity activity, OnMessageClickedListener listener) {
         this.activity = activity;
         this.listener = listener;
-        inflater = activity.getLayoutInflater();
         messages = new ArrayList<>();
+        layoutInflater = activity.getLayoutInflater();
     }
 
     public ArrayList<Message> getMessages() {
@@ -33,16 +30,16 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> imp
 
     @Override
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.list_item_message, parent, false);
+        View view = layoutInflater.inflate(R.layout.list_item_message, parent, false);
         view.setOnClickListener(this);
-        MessageViewHolder messageViewHolder =  new MessageViewHolder(view);
-        messageViewHolder.getBackgroundView().setOnClickListener(this);
-        return messageViewHolder;
+        MessageViewHolder viewHolder = new MessageViewHolder(view);
+        viewHolder.getBackgroundView().setOnClickListener(this);
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(MessageViewHolder holder, int position) {
-       Message message = messages.get(position);
+        Message message = messages.get(position);
         holder.getBackgroundView().setTag(message);
         holder.populate(activity, message);
     }
@@ -61,6 +58,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessageViewHolder> imp
     }
 
     public interface OnMessageClickedListener {
-        void onMessageClicked (Message message);
+        void onMessageClicked(Message message);
     }
 }

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="whito">#FFFFFF</color>
-    <color name="list_item_nav_drawer_selected_item_text_color">#2896f3</color>
-    <color name="contacts_pending_contact_request">#607D8B</color>
-    <color name="list_item_message_background_selected">#8c9efe</color>
+    <color name="primary_color_dark">#2196F3</color>
+    <color name="primary_color_darker">#3F51B5</color>
+    <color name="list_item_nav_drawer_selected_item_text_color">#2196F3</color>
+    <color name="contacts_pending_contact_requests">#607D8B</color>
+    <color name="list_item_message_background_selected">#8C9EFE</color>
     <color name="list_item_message_background">#eee</color>
-    <color name="list_item_message_background_unread">#fff2cf</color>
-
+    <color name="list_item_message_background_unread">#FFF2CF</color>
 </resources>

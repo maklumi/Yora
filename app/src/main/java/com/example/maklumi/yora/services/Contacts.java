@@ -6,12 +6,8 @@ import com.example.maklumi.yora.services.entities.UserDetails;
 
 import java.util.List;
 
-/**
- * Created by Maklumi on 21-02-16.
- */
 public final class Contacts {
     private Contacts() {
-
     }
 
     public static class GetContactRequestsRequest {
@@ -26,15 +22,15 @@ public final class Contacts {
         public List<ContactRequest> Requests;
     }
 
-    public static class GetContactRequest {
+    public static class GetContactsRequest {
         public boolean IncludePendingContacts;
 
-        public GetContactRequest(boolean includePendingContacts) {
+        public GetContactsRequest(boolean includePendingContacts) {
             IncludePendingContacts = includePendingContacts;
         }
     }
 
-    public static class GetContactResponse extends ServiceResponse {
+    public static class GetContactsResponse extends ServiceResponse {
         public List<UserDetails> Contacts;
     }
 
@@ -60,64 +56,30 @@ public final class Contacts {
     }
 
     public static class RespondToContactRequestResponse extends ServiceResponse {
-
     }
-
-    public static class RemoveContactResponse extends ServiceResponse {
-        public int RemoveContactId;
-    }
-
 
     public static class RemoveContactRequest {
         public int ContactId;
 
-        public RemoveContactRequest(int contactId){
+        public RemoveContactRequest(int contactId) {
             ContactId = contactId;
         }
     }
 
-    public static class SearchUserRequest {
+    public static class RemoveContactResponse extends ServiceResponse {
+        public int RemovedContactId;
+    }
+
+    public static class SearchUsersRequest {
         public String Query;
 
-        public SearchUserRequest(String query) {
+        public SearchUsersRequest(String query) {
             Query = query;
         }
     }
 
-    public static class SearchUserResponse extends ServiceResponse {
+    public static class SearchUsersResponse extends ServiceResponse {
         public List<UserDetails> Users;
         public String Query;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -4,26 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/include_toolbar"
+    <include
+        layout="@layout/include_toolbar"
         android:id="@+id/include_toolbar"/>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/include_toolbar"
-        android:id="@+id/activity_add_contact_userListView"
-        ></ListView>
+        android:layout_below="@id/include_toolbar"
+        android:id="@+id/activity_add_contact_usersListView"/>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/activity_add_contact_progressFrame"
         android:clickable="true">
-
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminate="true"/>
+            android:indeterminate="true" />
     </FrameLayout>
+
 </RelativeLayout>

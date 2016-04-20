@@ -1,28 +1,22 @@
 package com.example.maklumi.yora.infrastructure;
 
-
 import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by HomePC on 21/2/2016.
- */
 public class ActionScheduler {
-
     private final YoraApplication application;
     private final Handler handler;
-    private final ArrayList<TimeCallback> timeCallbacks;
-    private final HashMap<Class, Runnable> onResumeAction;
+    private final ArrayList<TimedCallback> timedCallbacks;
+    private final HashMap<Class, Runnable> onResumeActions;
     private boolean isPaused;
 
     public ActionScheduler(YoraApplication application) {
-
-        onResumeAction = new HashMap<>();
         this.application = application;
         handler = new Handler();
-        timeCallbacks = new ArrayList<>();
+        timedCallbacks = new ArrayList<>();
+        onResumeActions = new HashMap<>();
     }
 
     public void onPause() {
@@ -30,16 +24,17 @@ public class ActionScheduler {
     }
 
     public void onResume() {
-isPaused = false;
-        for (TimeCallback callback : timeCallbacks ){
+        isPaused = false;
+
+        for (TimedCallback callback : timedCallbacks) {
             callback.schedule();
         }
 
-        for (Runnable runnable : onResumeAction.values()) {
+        for (Runnable runnable : onResumeActions.values()) {
             runnable.run();
         }
 
-        onResumeAction.clear();
+        onResumeActions.clear();
     }
 
     public void invokeOnResume(Class cls, Runnable runnable) {
@@ -48,7 +43,7 @@ isPaused = false;
             return;
         }
 
-        onResumeAction.put(cls, runnable);
+        onResumeActions.put(cls, runnable);
     }
 
     public void postDelayed(Runnable runnable, long milliseconds) {
@@ -59,11 +54,11 @@ isPaused = false;
         invokeEveryMilliseconds(runnable, milliseconds, true);
     }
 
-    public void invokeEveryMilliseconds(Runnable runnable, long milliseconds, boolean runImmediately) {
-        TimeCallback callback = new TimeCallback(runnable, milliseconds);
-        timeCallbacks.add(callback);
+    public void invokeEveryMilliseconds(Runnable runnable, long milliseconds, boolean runImmediatley) {
+        TimedCallback callback = new TimedCallback(runnable, milliseconds);
+        timedCallbacks.add(callback);
 
-        if (runImmediately) {
+        if (runImmediatley) {
             callback.run();
         } else {
             postDelayed(callback, milliseconds);
@@ -83,11 +78,11 @@ isPaused = false;
         }, milliseconds, postImmediately);
     }
 
-    private class TimeCallback implements Runnable {
+    private class TimedCallback implements Runnable {
         private final Runnable runnable;
         private final long delay;
 
-        public TimeCallback(Runnable runnable, long delay) {
+        public TimedCallback(Runnable runnable, long delay) {
             this.runnable = runnable;
             this.delay = delay;
         }
@@ -95,7 +90,7 @@ isPaused = false;
         @Override
         public void run() {
             if (isPaused)
-                return;;
+                return;
 
             runnable.run();
             schedule();
@@ -106,4 +101,3 @@ isPaused = false;
         }
     }
 }
-

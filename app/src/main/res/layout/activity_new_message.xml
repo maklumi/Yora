@@ -12,10 +12,9 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/ic_camera_front_black_24dp"
+        android:src="@drawable/ic_action_camera"
         android:padding="5dp"
         android:id="@+id/activity_new_message_takePicture"/>
-
 
     <ImageButton
         android:layout_width="46dp"
@@ -24,7 +23,8 @@
         android:layout_gravity="bottom|start"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/ic_camera_rear_black_24dp"
+        android:src="@drawable/ic_action_user"
         android:padding="5dp"
         android:id="@+id/activity_new_message_switchCamera"/>
+
 </FrameLayout>

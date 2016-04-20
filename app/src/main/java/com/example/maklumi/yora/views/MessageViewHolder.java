@@ -1,6 +1,7 @@
 package com.example.maklumi.yora.views;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -12,10 +13,7 @@ import com.example.maklumi.yora.R;
 import com.example.maklumi.yora.services.entities.Message;
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by Maklumi on 23-02-16.
- */
-public class MessageViewHolder  extends RecyclerView.ViewHolder{
+public class MessageViewHolder extends RecyclerView.ViewHolder {
     private ImageView avatar;
     private TextView displayName;
     private TextView createdAt;
@@ -37,7 +35,7 @@ public class MessageViewHolder  extends RecyclerView.ViewHolder{
         return backgroundView;
     }
 
-    public void populate(Context context, Message message){
+    public void populate(Context context, Message message) {
         itemView.setTag(message);
 
         Picasso.with(context).load(message.getOtherUser().getAvatarUrl()).into(avatar);
@@ -45,10 +43,9 @@ public class MessageViewHolder  extends RecyclerView.ViewHolder{
         String createdAt = DateUtils.formatDateTime(
                 context,
                 message.getCreatedAt().getTimeInMillis(),
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME
-        );
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 
-        sentReceived.setText(message.isFromUs() ? "sent" : "received");
+        sentReceived.setText(message.isFromUs() ? "sent " : "received");
         displayName.setText(message.getOtherUser().getDisplayName());
         this.createdAt.setText(createdAt);
 
@@ -56,8 +53,7 @@ public class MessageViewHolder  extends RecyclerView.ViewHolder{
         if (message.isSelected()) {
             colorResourceId = R.color.list_item_message_background_selected;
             cardView.setCardElevation(5);
-
-        } else if (message.isRead()){
+        } else if (message.isRead()) {
             colorResourceId = R.color.list_item_message_background;
             cardView.setCardElevation(2);
         } else {
@@ -65,13 +61,6 @@ public class MessageViewHolder  extends RecyclerView.ViewHolder{
             cardView.setCardElevation(3);
         }
 
-        cardView.setBackgroundColor(context.getResources().getColor(colorResourceId));
+        cardView.setCardBackgroundColor(context.getResources().getColor(colorResourceId));
     }
-
-
-
-
-
-
-
 }

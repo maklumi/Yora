@@ -10,25 +10,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/include_toolbar"/>
-
+        <include layout="@layout/include_toolbar" />
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-
+            android:layout_height="match_parent">
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/activity_sent_messages_messages"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical">
-
-            </android.support.v7.widget.RecyclerView>
-
+                android:scrollbars="vertical" />
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#81d4fa"
+                android:background="#91D4Fa"
                 android:clickable="true"
                 android:id="@+id/activity_sent_messages_progressFrame">
                 <ProgressBar
@@ -40,6 +34,6 @@
         </FrameLayout>
     </LinearLayout>
 
-    <include layout="@layout/include_main_nav_drawer"/>
+    <include layout="@layout/include_main_nav_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

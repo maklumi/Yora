@@ -16,9 +16,6 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
-/**
- * Created by Maklumi on 17-02-16.
- */
 public class SentMessagesActivity extends BaseAuthenticatedActivity implements MessagesAdapter.OnMessageClickedListener {
     private static final int REQUEST_VIEW_MESSAGE = 1;
 
@@ -27,7 +24,7 @@ public class SentMessagesActivity extends BaseAuthenticatedActivity implements M
     private View progressFrame;
 
     @Override
-    protected void onYoraCreate(Bundle savedInstance) {
+    protected void onYoraCreate(Bundle savedState) {
         setContentView(R.layout.activity_sent_messages);
         setNavDrawer(new MainNavDrawer(this));
         getSupportActionBar().setTitle("Sent Messages");
@@ -46,7 +43,7 @@ public class SentMessagesActivity extends BaseAuthenticatedActivity implements M
 
         progressFrame = findViewById(R.id.activity_sent_messages_progressFrame);
 
-        scheduler.postEveryMilliseconds(new Messages.SearchMessagesRequest( true, false), 1000 * 60 * 3);
+        scheduler.postEveryMilliseconds(new Messages.SearchMessagesRequest(true, false), 1000 * 60 * 3);
     }
 
     @Override
@@ -67,7 +64,7 @@ public class SentMessagesActivity extends BaseAuthenticatedActivity implements M
             return;
         }
 
-        for (int i=0; i<messages.size(); i++){
+        for (int i = 0; i < messages.size(); i++) {
             Message message = messages.get(i);
             if (message.getId() != messageId) {
                 continue;
@@ -93,19 +90,3 @@ public class SentMessagesActivity extends BaseAuthenticatedActivity implements M
         progressFrame.setVisibility(View.GONE);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

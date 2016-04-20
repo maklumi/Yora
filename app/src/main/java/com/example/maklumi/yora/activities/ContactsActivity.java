@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,23 +18,23 @@ import com.example.maklumi.yora.fragments.ContactsFragment;
 import com.example.maklumi.yora.fragments.PendingContactRequestsFragment;
 import com.example.maklumi.yora.views.MainNavDrawer;
 
-/**
- * Created by Maklumi on 17-02-16.
- */
 public class ContactsActivity extends BaseAuthenticatedActivity implements AdapterView.OnItemSelectedListener {
-    private ObjectAnimator currentAnimator;
+    private ObjectAnimator currentAnimation;
     private ArrayAdapter<ContactsSpinnerItem> adapter;
 
     @Override
-    protected void onYoraCreate(Bundle savedInstance) {
+    protected void onYoraCreate(Bundle savedState) {
         setContentView(R.layout.activity_contacts);
         setNavDrawer(new MainNavDrawer(this));
 
         adapter = new ArrayAdapter<>(this, R.layout.list_item_toolbar_spinner);
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
-        adapter.add(new ContactsSpinnerItem("Contacts", Color.parseColor("#0CBCD4"), ContactsFragment.class));
-        adapter.add(new ContactsSpinnerItem("Pending Contact Requests",
-                getResources().getColor(R.color.contacts_pending_contact_request), PendingContactRequestsFragment.class));
+
+        adapter.add(new ContactsSpinnerItem("Contacts", Color.parseColor("#00BCD4"), ContactsFragment.class));
+        adapter.add(new ContactsSpinnerItem(
+                "Pending Contact Requests",
+                getResources().getColor(R.color.contacts_pending_contact_requests),
+                PendingContactRequestsFragment.class));
 
         Spinner spinner = (Spinner) findViewById(R.id.activity_contacts_spinner);
         spinner.setAdapter(adapter);
@@ -48,21 +49,21 @@ public class ContactsActivity extends BaseAuthenticatedActivity implements Adapt
         if (item == null)
             return;
 
-        if (currentAnimator != null)
-            currentAnimator.end();
+        if (currentAnimation != null)
+            currentAnimation.end();
 
         int currentColor = ((ColorDrawable) toolbar.getBackground()).getColor();
 
-        currentAnimator = ObjectAnimator
+        currentAnimation = ObjectAnimator
                 .ofObject(toolbar, "backgroundColor", new ArgbEvaluator(), currentColor, item.getColor())
                 .setDuration(250);
-        currentAnimator.start();
+
+        currentAnimation.start();
 
         Fragment fragment;
         try {
             fragment = (Fragment) item.getFragment().newInstance();
         } catch (Exception e) {
-           // e.printStackTrace();
             Log.e("ContactsActivity", "Could not instantiate fragment " + item.getFragment().getName(), e);
             return;
         }
@@ -76,21 +77,21 @@ public class ContactsActivity extends BaseAuthenticatedActivity implements Adapt
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
-    public class ContactsSpinnerItem {
+    private class ContactsSpinnerItem {
         private final String title;
         private final int color;
         private Class fragment;
 
-        public String getTitle() {
-            return title;
+        public ContactsSpinnerItem(String title, int color, Class fragment) {
+            this.title = title;
+            this.color = color;
+            this.fragment = fragment;
         }
 
-        @Override
-        public String toString() {
-            return getTitle();
+        public String getTitle() {
+            return title;
         }
 
         public int getColor() {
@@ -101,11 +102,9 @@ public class ContactsActivity extends BaseAuthenticatedActivity implements Adapt
             return fragment;
         }
 
-        public ContactsSpinnerItem(String title, int color, Class fragment) {
-            this.title = title;
-            this.color = color;
-            this.fragment = fragment;
+        @Override
+        public String toString() {
+            return getTitle();
         }
-
     }
 }

@@ -7,24 +7,20 @@ import com.example.maklumi.yora.infrastructure.ActionScheduler;
 import com.example.maklumi.yora.infrastructure.YoraApplication;
 import com.squareup.otto.Bus;
 
-/**
- * Created by HomePC on 19/2/2016.
- */
-public class BaseDialogFragment extends DialogFragment {
+public abstract class BaseDialogFragment extends DialogFragment {
     protected YoraApplication application;
     protected Bus bus;
+    protected ActionScheduler scheduler;
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
         application = (YoraApplication) getActivity().getApplication();
         scheduler = new ActionScheduler(application);
-        bus = application.getBus();
 
-        scheduler = new ActionScheduler(application);
+        bus = application.getBus();
         bus.register(this);
     }
-
-    protected ActionScheduler scheduler;
 
     @Override
     public void onDestroy() {
@@ -33,14 +29,14 @@ public class BaseDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        scheduler.onResume();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         scheduler.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        scheduler.onResume();
     }
 }
